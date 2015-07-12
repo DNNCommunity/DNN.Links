@@ -1,0 +1,25 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                03.03.06                          *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/** Change the procedure to allow for ModuleID to be passed in. **/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteLink
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}DeleteLink
+
+	@ItemId INT,
+	@ModuleId INT
+
+AS
+
+DELETE
+FROM {databaseOwner}{objectQualifier}Links
+WHERE  ItemID = @ItemId AND ModuleID = @ModuleId

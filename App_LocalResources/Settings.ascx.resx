@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="plControl.Text" xml:space="preserve">
+    <value>Control Type</value>
+  </data>
+  <data name="plControl.Help" xml:space="preserve">
+    <value>Select the type of control to use for displaying the links</value>
+  </data>
+  <data name="List.Text" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="Dropdown.Text" xml:space="preserve">
+    <value>Dropdown</value>
+  </data>
+  <data name="ploptView.Text" xml:space="preserve">
+    <value>List Display Format</value>
+  </data>
+  <data name="ploptView.Help" xml:space="preserve">
+    <value>If using a List Control, select the display direction</value>
+  </data>
+  <data name="Vertical.Text" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
+  <data name="Horizontal.Text" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="plInfo.Text" xml:space="preserve">
+    <value>Display Info Link</value>
+  </data>
+  <data name="plInfo.Help" xml:space="preserve">
+    <value>Select whether you want to display an icon to the left of each link</value>
+  </data>
+  <data name="plIcon.Text" xml:space="preserve">
+    <value>Display Icon</value>
+  </data>
+  <data name="ControlTitle_settings.Text" xml:space="preserve">
+    <value>Links Settings</value>
+  </data>
+  <data name="ModuleHelp.Text" xml:space="preserve">
+    <value>&lt;h1&gt;About The Links Settings &lt;/h1&gt;&lt;p&gt;The Links Module provides methods for displaying hyperlinks in a module. There are 3 Links Settings that controls the display and actions performed for a link within the module. &lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Control Type&lt;/strong&gt; - Refers to how a link is displayed, either in a list of hyperlinks, or a dropdown textbox. &lt;ul&gt;&lt;li&gt;&lt;strong&gt;&lt;em&gt;List&lt;/em&gt; &lt;/strong&gt;– allows for displaying links with the familiar hyperlink format. Using this method all of the modules links are displayed in the area where the module is placed. &lt;/li&gt;&lt;li&gt;&lt;strong&gt;&lt;em&gt;Dropdown&lt;/em&gt; &lt;/strong&gt;– this option is useful to minimize the area used by the module. All of the links appear in a user-defined order from a dropdown textbox. &lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;List Display Format&lt;/strong&gt; – When a Links module’s &lt;strong&gt;Control Type&lt;/strong&gt; is set to &lt;strong&gt;List&lt;/strong&gt;, this option controls how the links are displayed directionally within the area where the module is placed. &lt;ul&gt;&lt;li&gt;&lt;strong&gt;&lt;em&gt;Vertical&lt;/em&gt; &lt;/strong&gt;– links appear down the page &lt;/li&gt;&lt;li&gt;&lt;strong&gt;&lt;em&gt;Horizontal&lt;/em&gt; &lt;/strong&gt;– links appear across the page. &lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Display Info Link&lt;/strong&gt; – Displays an &lt;em&gt;ellipse&lt;/em&gt; (…) hyperlink that allows an optional brief text description of the link to display when a the ellipse is clicked. &lt;/li&gt;&lt;li&gt;&lt;strong&gt;Wrap Links&lt;/strong&gt; - Defines whether the content area in which the links module resides will stretch to fit the link&lt;ul&gt;&lt;li&gt;Wrap - Links will wrap to the next line if they are wider than the content area&lt;/li&gt;&lt;li&gt;No Wrap - The content area will expand to fit longer links. Mind you: this could mess up the layout of the page!&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Display Icon&lt;/strong&gt; - Allows you to select an image to display in front of a link&lt;/li&gt;&lt;/ul&gt;</value>
+  </data>
+  <data name="plNoWrap.Text" xml:space="preserve">
+    <value>Wrap Links</value>
+  </data>
+  <data name="plNoWrap.Help" xml:space="preserve">
+    <value>If wrapping is disabled, the content area in which the links module resides will stretch to fit the link, otherwise the content areas width will be fixed.</value>
+  </data>
+  <data name="NoWrap.Text" xml:space="preserve">
+    <value>No wrap</value>
+  </data>
+  <data name="plIcon.Help" xml:space="preserve">
+    <value>Select icon to display in front of links</value>
+  </data>
+  <data name="Wrap.Text" xml:space="preserve">
+    <value>Wrap</value>
+  </data>
+  <data name="plLinkModuleType.Help" xml:space="preserve">
+    <value>Choose the Module Mode</value>
+  </data>
+  <data name="plLinkModuleType.Text" xml:space="preserve">
+    <value>Module Mode</value>
+  </data>
+  <data name="plUsePermissions.Help" xml:space="preserve">
+    <value>Enable Filtering Links by Roles</value>
+  </data>
+  <data name="plUsePermissions.Text" xml:space="preserve">
+    <value>Use Permissions</value>
+  </data>
+  <data name="plUsePopup.Text" xml:space="preserve">
+    <value>Telerik Popup</value>
+  </data>
+  <data name="plDisplayAttribute.Help" xml:space="preserve">
+    <value>Profile attribute needs to be displayed in Ascending or Descending order</value>
+  </data>
+  <data name="plDisplayAttribute.Text" xml:space="preserve">
+    <value>Display Attribute</value>
+  </data>
+  <data name="plMenuAllUsers.Help" xml:space="preserve">
+    <value>You can decide whether the hidden Pages can be seen by all users or not</value>
+  </data>
+  <data name="plMenuAllUsers.Text" xml:space="preserve">
+    <value>Display Hidden Menus</value>
+  </data>
+</root>

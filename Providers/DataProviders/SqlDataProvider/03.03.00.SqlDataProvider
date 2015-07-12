@@ -1,0 +1,165 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/** Change CreatedByUser column to an int for performance **/
+
+ALTER TABLE {databaseOwner}{objectQualifier}Links ADD
+	CreatedByUserID int NULL
+GO
+
+UPDATE {databaseOwner}{objectQualifier}Links
+SET    CreatedByUserID = CONVERT(int, CreatedByUser)
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Links
+	DROP COLUMN CreatedByUser
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Links ADD
+	CreatedByUser int NOT NULL CONSTRAINT DF_{objectQualifier}Links_CreatedByUser DEFAULT 0
+GO
+
+UPDATE {databaseOwner}{objectQualifier}Links
+SET    CreatedByUser = CreatedByUserID
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Links
+	DROP COLUMN CreatedByUserID
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Links
+	DROP CONSTRAINT DF_{objectQualifier}Links_CreatedByUser
+GO
+
+/** Drop Existing Stored Procedures **/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}AddLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GetLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetLinks]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GetLinks
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateLink
+GO
+
+/** Create Optimized Stored Procedures **/
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}AddLink
+
+	@ModuleId    int,
+	@UserId      int,
+	@Title       nvarchar(100),
+	@Url         nvarchar(250),
+	@ViewOrder   int,
+	@Description nvarchar(2000)
+
+AS
+
+INSERT INTO {databaseOwner}{objectQualifier}Links (
+	ModuleId,
+	CreatedByUser,
+	CreatedDate,
+	Title,
+	Url,
+	ViewOrder,
+	Description
+)
+VALUES (
+	@ModuleId,
+	@UserId,
+	GetDate(),
+	@Title,
+	@Url,
+	@ViewOrder,
+	@Description
+)
+
+SELECT SCOPE_IDENTITY()
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetLink
+
+@ItemId   int,
+@ModuleId int
+
+AS
+
+SELECT  L.ItemId,
+	L.ModuleId,
+	L.Title,
+	L.URL,
+    L.ViewOrder,
+    L.Description,
+    L.CreatedByUser,
+    L.CreatedDate,
+    UT.TrackClicks,
+    UT.NewWindow
+FROM    {databaseOwner}{objectQualifier}Links L
+LEFT OUTER JOIN {databaseOwner}{objectQualifier}UrlTracking UT ON L.URL = UT.Url AND L.ModuleId = UT.ModuleId 
+WHERE  L.ItemId = @ItemId AND L.ModuleId = @ModuleId
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetLinks
+
+@ModuleId int
+
+AS
+
+SELECT L.ItemId,
+       L.ModuleId,
+       L.CreatedByUser,
+       L.CreatedDate,
+       L.Title,
+       L.URL,
+       L.ViewOrder,
+       L.Description,
+       UT.TrackClicks,
+       UT.NewWindow
+FROM   {databaseOwner}{objectQualifier}Links L
+LEFT OUTER JOIN {databaseOwner}{objectQualifier}UrlTracking UT ON L.URL = UT.Url AND L.ModuleId = UT.ModuleId 
+WHERE  L.ModuleId = @ModuleId 
+ORDER BY L.ViewOrder, L.Title
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdateLink
+
+	@ItemId      int,
+	@UserId      int,
+	@Title       nvarchar(100),
+	@Url         nvarchar(250),
+	@ViewOrder   int,
+	@Description nvarchar(2000)
+
+AS
+
+UPDATE {objectQualifier}Links
+SET    CreatedByUser = @UserId,
+       CreatedDate   = GetDate(),
+       Title         = @Title,
+       Url           = @Url,
+       ViewOrder     = @ViewOrder,
+       Description   = @Description
+WHERE  ItemId = @ItemId
+
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -1,0 +1,194 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****               04.00.00                           *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+-- delete auto-named foreign key
+DECLARE @FKName NVARCHAR(100)
+DECLARE @strSQL nvarchar(1000)
+SELECT @FKName = [name] FROM dbo.sysobjects WHERE TYPE='F' AND parent_obj =  object_id(N'{databaseOwner}[{objectQualifier}Links]')
+SELECT @strSQL ='ALTER TABLE {databaseOwner}[{objectQualifier}Links] DROP CONSTRAINT ' + @FKName
+EXECUTE(@strSQL)
+
+GO
+
+-- create new named foreign key
+ALTER TABLE {databaseOwner}[{objectQualifier}Links]  WITH NOCHECK ADD  CONSTRAINT [FK_{objectQualifier}Links_{objectQualifier}Modules] FOREIGN KEY([ModuleID])
+REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID])
+ON DELETE CASCADE
+
+
+GO
+
+/** Drop Existing Stored Procedures **/
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}AddLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GetLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GetLinks]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GetLinks
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_AddLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	drop procedure {databaseOwner}{objectQualifier}dnnLinks_AddLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_GetLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_GetLinks]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLinks
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_UpdateLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_UpdateLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_DeleteLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_DeleteLink
+GO
+
+/** Create renamed Stored Procedures **/
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_AddLink
+
+	@ModuleId    int,
+	@UserId      int,
+	@CreatedDate datetime,
+	@Title       nvarchar(100),
+	@Url         nvarchar(250),
+	@ViewOrder   int,
+	@Description nvarchar(2000)
+
+AS
+
+INSERT INTO {databaseOwner}{objectQualifier}Links (
+	ModuleId,
+	CreatedByUser,
+	CreatedDate,
+	Title,
+	Url,
+	ViewOrder,
+	Description
+)
+VALUES (
+	@ModuleId,
+	@UserId,
+	@CreatedDate,
+	@Title,
+	@Url,
+	@ViewOrder,
+	@Description
+)
+
+SELECT SCOPE_IDENTITY()
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLink
+
+@ItemId   int,
+@ModuleId int
+
+AS
+
+SELECT  L.ItemId,
+	L.ModuleId,
+	L.Title,
+	L.URL,
+    L.ViewOrder,
+    L.Description,
+    L.CreatedByUser,
+    L.CreatedDate,
+    UT.TrackClicks,
+    UT.NewWindow
+FROM    {databaseOwner}{objectQualifier}Links L
+LEFT OUTER JOIN {databaseOwner}{objectQualifier}UrlTracking UT ON L.URL = UT.Url AND L.ModuleId = UT.ModuleId 
+WHERE  L.ItemId = @ItemId AND L.ModuleId = @ModuleId
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLinks
+
+@ModuleId int
+
+AS
+
+SELECT L.ItemId,
+       L.ModuleId,
+       L.CreatedByUser,
+       L.CreatedDate,
+       L.Title,
+       L.URL,
+       L.ViewOrder,
+       L.Description,
+       UT.TrackClicks,
+       UT.NewWindow
+FROM   {databaseOwner}{objectQualifier}Links L
+LEFT OUTER JOIN {databaseOwner}{objectQualifier}UrlTracking UT ON L.URL = UT.Url AND L.ModuleId = UT.ModuleId 
+WHERE  L.ModuleId = @ModuleId 
+ORDER BY L.ViewOrder, L.Title
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_UpdateLink
+
+	@ItemId      int,
+	@UserId      int,
+	@CreatedDate DateTime,
+	@Title       nvarchar(100),
+	@Url         nvarchar(250),
+	@ViewOrder   int,
+	@Description nvarchar(2000)
+
+AS
+
+UPDATE {objectQualifier}Links
+SET    CreatedByUser = @UserId,
+       CreatedDate   = @CreatedDate,
+       Title         = @Title,
+       Url           = @Url,
+       ViewOrder     = @ViewOrder,
+       Description   = @Description
+WHERE  ItemId = @ItemId
+
+GO
+
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_DeleteLink
+
+	@ItemId INT,
+	@ModuleId INT
+
+AS
+
+DELETE
+FROM {databaseOwner}{objectQualifier}Links
+WHERE  ItemID = @ItemId AND ModuleID = @ModuleId
+
+GO
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

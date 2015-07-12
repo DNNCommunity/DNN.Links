@@ -1,0 +1,148 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****              04.01.01                            *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/** [alex]  10/02/2009 - Added column RefreshInterval for automaticly refresh link title and description **/
+/** [tschaupp] 10/11/2009 - Added column GrantRoles **/
+
+ALTER TABLE {databaseOwner}{objectQualifier}Links ADD
+	GrantRoles nvarchar(500) NULL
+GO
+
+/** [alex]  10/02/2009 - Added new column (RefreshInterval) into select/update/insert stored procedures  **/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_AddLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	drop procedure {databaseOwner}{objectQualifier}dnnLinks_AddLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_GetLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLink
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_GetLinks]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLinks
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_UpdateLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_UpdateLink
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_AddLink
+
+	@ModuleId    int,
+	@UserId      int,
+	@CreatedDate datetime,
+	@Title       nvarchar(100),
+	@Url         nvarchar(250),
+	@ViewOrder   int,
+	@Description nvarchar(2000),
+	@RefreshInterval int,
+	@GrantRoles nvarchar(500)
+
+AS
+
+INSERT INTO {databaseOwner}{objectQualifier}Links (
+	ModuleId,
+	CreatedByUser,
+	CreatedDate,
+	Title,
+	Url,
+	ViewOrder,
+	Description,
+	RefreshInterval,
+	GrantRoles
+)
+VALUES (
+	@ModuleId,
+	@UserId,
+	@CreatedDate,
+	@Title,
+	@Url,
+	@ViewOrder,
+	@Description,
+	@RefreshInterval,
+	@GrantRoles
+)
+
+SELECT SCOPE_IDENTITY()
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLink
+
+@ItemId   int,
+@ModuleId int
+
+AS
+
+SELECT  L.ItemId,
+	L.ModuleId,
+	L.Title,
+	L.URL,
+    L.ViewOrder,
+    L.Description,
+    L.CreatedByUser,
+    L.CreatedDate,
+    UT.TrackClicks,
+    UT.NewWindow,
+    L.RefreshInterval,
+    L.GrantRoles
+FROM    {databaseOwner}{objectQualifier}Links L
+LEFT OUTER JOIN {databaseOwner}{objectQualifier}UrlTracking UT ON L.URL = UT.Url AND L.ModuleId = UT.ModuleId 
+WHERE  L.ItemId = @ItemId AND L.ModuleId = @ModuleId
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_GetLinks
+
+@ModuleId int
+
+AS
+
+SELECT L.ItemId,
+       L.ModuleId,
+       L.CreatedByUser,
+       L.CreatedDate,
+       L.Title,
+       L.URL,
+       L.ViewOrder,
+       L.Description,
+       UT.TrackClicks,
+       UT.NewWindow,
+       L.RefreshInterval,
+       L.GrantRoles
+FROM   {databaseOwner}{objectQualifier}Links L
+LEFT OUTER JOIN {databaseOwner}{objectQualifier}UrlTracking UT ON L.URL = UT.Url AND L.ModuleId = UT.ModuleId 
+WHERE  L.ModuleId = @ModuleId 
+ORDER BY L.ViewOrder, L.Title
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}dnnLinks_UpdateLink
+
+	@ItemId				 int,
+	@UserId				 int,
+	@CreatedDate		 DateTime,
+	@Title				 nvarchar(100),
+	@Url				 nvarchar(250),
+	@ViewOrder			 int,
+	@Description		 nvarchar(2000),
+	@RefreshInterval	 int,
+    @GrantRoles           nvarchar(500)
+AS
+
+UPDATE {databaseOwner}{objectQualifier}Links
+SET    CreatedByUser   = @UserId,
+       CreatedDate     = @CreatedDate,
+       Title           = @Title,
+       Url             = @Url,
+       ViewOrder       = @ViewOrder,
+       Description     = @Description,
+       RefreshInterval = @RefreshInterval,
+       GrantRoles       = @GrantRoles
+WHERE  ItemId = @ItemId

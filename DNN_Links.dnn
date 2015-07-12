@@ -1,0 +1,237 @@
+﻿<dotnetnuke type="Package" version="5.0">
+  <packages><package name="DNN_Links" type="Module" version="6.2.3">
+  <friendlyName>Links</friendlyName>
+  <description>This module renders a list of hyperlinks. Links includes an edit page, which allows authorized users to edit the Links data stored in the SQL database.</description>
+  <iconFile />
+  <owner>
+    <name>DotNetNuke Corporation</name>
+    <organization>DotNetNuke Corporation</organization>
+    <url>http://www.dotnetnuke.com</url>
+    <email>support@dotnetnuke.com</email>
+  </owner>
+  <license>      Copyright (c) 2011 DotNetNuke Corporation&lt;br /&gt;
+      &lt;br /&gt;
+      Permission is hereby granted, free of charge, to any person obtaining a copy of 
+      this software and associated documentation files (the &amp;quot;Software&amp;quot;), to deal in 
+      the Software without restriction, including without limitation the rights to 
+      use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
+      the Software, and to permit persons to whom the Software is furnished to do so, 
+      subject to the following conditions:&lt;br /&gt;
+      &lt;br /&gt;
+      The above copyright notice and this permission notice shall be included in all 
+      copies or substantial portions of the Software.&lt;br /&gt;
+      &lt;br /&gt;
+      THE SOFTWARE IS PROVIDED &amp;quot;AS IS&amp;quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+      FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+      COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+      IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+      CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+</license>
+  <releaseNotes>&lt;h2&gt;Release notes DNN Links 06.02.03&lt;/h2&gt;
+&lt;p&gt;Links Module 06.02.03 will work for DNN version 07.02.00 and newer.&lt;/p&gt;
+&lt;h3&gt;New features&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Menu Mode: option to display hidden pages &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Bug fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Reference a Link Module on another page&lt;/li&gt;
+&lt;/ul&gt;</releaseNotes>
+  <components>
+    <component type="Script">
+      <scripts>
+        <basePath>DesktopModules\Links</basePath>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>03.01.00.SqlDataProvider</name>
+          <version>03.01.00</version>
+        </script>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>03.03.00.SqlDataProvider</name>
+          <version>03.03.00</version>
+        </script>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>03.03.06.SqlDataProvider</name>
+          <version>03.03.06</version>
+        </script>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>04.00.00.SqlDataProvider</name>
+          <version>04.00.00</version>
+        </script>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>04.00.01.SqlDataProvider</name>
+          <version>04.00.01</version>
+        </script>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>04.01.00.SqlDataProvider</name>
+          <version>04.01.00</version>
+        </script>
+        <script type="Install">
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>04.01.01.SqlDataProvider</name>
+          <version>04.01.01</version>
+        </script>
+        <script type="UnInstall">
+          <name>Uninstall.SqlDataProvider</name>
+          <version>6.2.3</version>
+        </script>
+      </scripts>
+    </component>
+    <component type="Module">
+      <desktopModule>
+        <moduleName>DNN_Links</moduleName>
+        <foldername>Links</foldername>
+        <businessControllerClass>DotNetNuke.Modules.Links.LinkController</businessControllerClass>
+        <codeSubDirectory>Links</codeSubDirectory>
+        <supportedFeatures>
+          <supportedFeature type="Portable" />
+          <supportedFeature type="Searchable" />
+        </supportedFeatures>
+        <moduleDefinitions>
+          <moduleDefinition>
+            <friendlyName>Links</friendlyName>
+            <definitionName>Links</definitionName>
+            <defaultCacheTime>0</defaultCacheTime>
+            <moduleControls>
+              <moduleControl>
+                <controlKey />
+                <controlSrc>DesktopModules/Links/Links.ascx</controlSrc>
+                <supportsPartialRendering>False</supportsPartialRendering>
+                <controlTitle />
+                <controlType>View</controlType>
+                <iconFile />
+                <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                <supportsPopUps>False</supportsPopUps>
+                <viewOrder>0</viewOrder>
+              </moduleControl>
+              <moduleControl>
+                <controlKey>Edit</controlKey>
+                <controlSrc>DesktopModules/Links/EditLinks.ascx</controlSrc>
+                <supportsPartialRendering>False</supportsPartialRendering>
+                <controlTitle>Edit Links</controlTitle>
+                <controlType>Edit</controlType>
+                <iconFile />
+                <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                <supportsPopUps>False</supportsPopUps>
+                <viewOrder>0</viewOrder>
+              </moduleControl>
+              <moduleControl>
+                <controlKey>Settings</controlKey>
+                <controlSrc>DesktopModules/Links/Settings.ascx</controlSrc>
+                <supportsPartialRendering>False</supportsPartialRendering>
+                <controlTitle>Links Settings</controlTitle>
+                <controlType>Edit</controlType>
+                <iconFile />
+                <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                <supportsPopUps>False</supportsPopUps>
+                <viewOrder>0</viewOrder>
+              </moduleControl>
+            </moduleControls>
+          </moduleDefinition>
+        </moduleDefinitions>
+      </desktopModule>
+      <eventMessage>
+        <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+        <processorCommand>UpgradeModule</processorCommand>
+        <attributes>
+          <businessControllerClass>DotNetNuke.Modules.Links.LinkController</businessControllerClass>
+          <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+          <upgradeVersionsList>03.01.00,03.03.00,03.03.06,04.00.00,04.00.01,04.01.00,04.01.01</upgradeVersionsList>
+        </attributes>
+      </eventMessage>
+    </component>
+    <component type="File">
+      <files>
+        <basePath>App_Code\Links</basePath>
+        <file>
+          <path>Providers\DataProviders\SqlDataProvider</path>
+          <name>SqlDataProvider.vb</name>
+        </file>
+        <file>
+          <name>Consts.vb</name>
+        </file>
+        <file>
+          <name>DataProvider.vb</name>
+        </file>
+        <file>
+          <name>Enums.vb</name>
+        </file>
+        <file>
+          <name>LinksController.vb</name>
+        </file>
+        <file>
+          <name>LinksFriend.vb</name>
+        </file>
+        <file>
+          <name>LinksInfo.vb</name>
+        </file>
+        <file>
+          <name>Utils.vb</name>
+        </file>
+      </files>
+    </component>
+    <component type="File">
+      <files>
+        <basePath>DesktopModules\Links</basePath>
+        <file>
+          <path>App_LocalResources</path>
+          <name>EditLinks.ascx.resx</name>
+        </file>
+        <file>
+          <path>App_LocalResources</path>
+          <name>Links.ascx.resx</name>
+        </file>
+        <file>
+          <path>App_LocalResources</path>
+          <name>Settings.ascx.resx</name>
+        </file>
+        <file>
+          <path>img</path>
+          <name>body.gif</name>
+        </file>
+        <file>
+          <path>img</path>
+          <name>bottom.gif</name>
+        </file>
+        <file>
+          <path>img</path>
+          <name>top.gif</name>
+        </file>
+        <file>
+          <path>js</path>
+          <name>toggle.js</name>
+        </file>
+        <file>
+          <name>EditLinks.ascx</name>
+        </file>
+        <file>
+          <name>EditLinks.ascx.vb</name>
+        </file>
+        <file>
+          <name>Links.ascx</name>
+        </file>
+        <file>
+          <name>Links.ascx.vb</name>
+        </file>
+        <file>
+          <name>Module.css</name>
+        </file>
+        <file>
+          <name>Settings.ascx</name>
+        </file>
+        <file>
+          <name>Settings.ascx.vb</name>
+        </file>
+      </files>
+    </component>
+  </components>
+</package></packages>
+</dotnetnuke>
