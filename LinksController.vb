@@ -66,6 +66,13 @@ Namespace DotNetNuke.Modules.Links
 
         End Sub
 
+        Public Sub DeleteOldLinksForModule(ByVal ModuleId as Integer)
+            
+            For Each oldLink In GetLinks(ModuleId)
+                DeleteLink(oldLink.ItemID, ModuleId)
+            Next
+        End Sub
+
         ''' <summary>
         ''' Function evaluates the targets content and tries to build a summary about the targets title and description.
         ''' </summary>
@@ -372,6 +379,9 @@ Namespace DotNetNuke.Modules.Links
         Public Sub ImportModule(ByVal ModuleID As Integer, ByVal Content As String, ByVal Version As String, ByVal UserId As Integer) Implements Entities.Modules.IPortable.ImportModule
             Dim xmlLink As XmlNode
             Dim xmlLinks As XmlNode = GetContent(Content, "links")
+            If xmlLinks.SelectNodes("link").Count >= 1
+                DeleteOldLinksForModule(ModuleID)
+            End If
             For Each xmlLink In xmlLinks.SelectNodes("link")
                 Dim objLink As New LinkInfo
                 objLink.ModuleId = ModuleID
