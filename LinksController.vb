@@ -66,10 +66,12 @@ Namespace DotNetNuke.Modules.Links
 
         End Sub
 
-        Public Sub DeleteOldLinksForModule(ByVal ModuleId as Integer)
+        Public Sub DeleteLinkIfItExistsForModule(ByVal ModuleId As Integer, ByVal objLink as LinkInfo)
             
             For Each oldLink In GetLinks(ModuleId)
-                DeleteLink(oldLink.ItemID, ModuleId)
+                If oldLink.Title = objLink.Title And oldLink.Url = objLink.Url
+                    DeleteLink(oldLink.ItemID, ModuleId)
+                End If
             Next
         End Sub
 
@@ -379,9 +381,6 @@ Namespace DotNetNuke.Modules.Links
         Public Sub ImportModule(ByVal ModuleID As Integer, ByVal Content As String, ByVal Version As String, ByVal UserId As Integer) Implements Entities.Modules.IPortable.ImportModule
             Dim xmlLink As XmlNode
             Dim xmlLinks As XmlNode = GetContent(Content, "links")
-            If xmlLinks.SelectNodes("link").Count >= 1
-                DeleteOldLinksForModule(ModuleID)
-            End If
             For Each xmlLink In xmlLinks.SelectNodes("link")
                 Dim objLink As New LinkInfo
                 objLink.ModuleId = ModuleID
@@ -397,6 +396,7 @@ Namespace DotNetNuke.Modules.Links
                 End Try
                 objLink.CreatedDate = DateTime.Now()
                 objLink.CreatedByUser = UserId
+                DeleteLinkIfItExistsForModule(ModuleID, objLink)
                 AddLink(objLink)
 
                 ' url tracking
