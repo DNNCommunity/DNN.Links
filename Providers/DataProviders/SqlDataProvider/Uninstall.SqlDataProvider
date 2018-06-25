@@ -1,0 +1,53 @@
+﻿/************************************************************/
+/*****              Uninstall.SqlDataProvider           *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/** Drop Links Table **/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'FK_{objectQualifier}Links_{objectQualifier}Modules') AND OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}[{objectQualifier}Links] DROP CONSTRAINT [FK_{objectQualifier}Links_{objectQualifier}Modules]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'PK_{objectQualifier}{objectQualifier}Links') AND OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}[{objectQualifier}Links] DROP CONSTRAINT [PK_{objectQualifier}Links]
+GO
+
+/*IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'IX_{objectQualifier}Links') AND OBJECTPROPERTY(id, N'IsIndex') = 1)
+	DROP INDEX {databaseOwner}[{objectQualifier}Links].[IX_{objectQualifier}Links]
+GO*/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{objectQualifier}Links') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Links]
+GO
+
+
+/** Drop Stored Procedures **/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_GetLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}dnnLinks_GetLink]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_GetLinks]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}dnnLinks_GetLinks]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_UpdateLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}dnnLinks_UpdateLink]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_DeleteLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}dnnLinks_DeleteLink]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}dnnLinks_AddLink]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}dnnLinks_AddLink]
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

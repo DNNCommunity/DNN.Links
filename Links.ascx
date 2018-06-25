@@ -1,5 +1,5 @@
-<%@ Control Language="vb" Inherits="DotNetNuke.Modules.Links.Links" CodeFile="Links.ascx.vb"
-    AutoEventWireup="false" Explicit="True" %>
+<%@ Control Language="C#" Inherits="DotNetNuke.Modules.Links.Links"
+    AutoEventWireup="false" Explicit="True" Codebehind="Links.ascx.cs" %>
 <%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <asp:Panel ID="pnlList" runat="server" CssClass="link_module">

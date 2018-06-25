@@ -1,6 +1,6 @@
 <%--[alex - 09/01/2009] changed CodeBehind to CodeFile (required for WPA projects)--%>
-<%@ Control Language="vb" CodeFile="EditLinks.ascx.vb" AutoEventWireup="false" Explicit="True"
-    Inherits="DotNetNuke.Modules.Links.EditLinks" %>
+<%@ Control Language="C#" AutoEventWireup="false" Explicit="True"
+    Inherits="DotNetNuke.Modules.Links.EditLinks" Codebehind="EditLinks.ascx.cs" %>
 <%@ Register Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" TagPrefix="DNNWC" %>
 <%@ Register TagPrefix="Portal" TagName="Tracking" Src="~/controls/URLTrackingControl.ascx" %>
 <%@ Register TagPrefix="Portal" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
