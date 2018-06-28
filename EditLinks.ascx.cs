@@ -55,10 +55,16 @@ namespace DotNetNuke.Modules.Links
     /// 	'''                       and localisation
     /// 	''' </history>
     /// 	''' -----------------------------------------------------------------------------
-    partial class EditLinks : PortalModuleBase
+    public partial class EditLinks : PortalModuleBase
     {
         private int itemId = -1;
-        
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            this.Load += Page_Load;
+        }
+
         /// -----------------------------------------------------------------------------
         ///         ''' <summary>
         ///         ''' Page_Load runs when the control is loaded
@@ -201,7 +207,7 @@ namespace DotNetNuke.Modules.Links
         ///         '''                       and localisation
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        private void cmdCancel_Click(object sender, EventArgs e)
+        public void cmdCancel_Click(object sender, EventArgs e)
         {
             try
             {
@@ -224,7 +230,7 @@ namespace DotNetNuke.Modules.Links
         ///         '''                       and localisation
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        private void cmdDelete_Click(object sender, EventArgs e)
+        public void cmdDelete_Click(object sender, EventArgs e)
         {
             try
             {
@@ -254,7 +260,7 @@ namespace DotNetNuke.Modules.Links
         ///         '''                       and localisation
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        private void cmdUpdate_Click(object sender, EventArgs e)
+        public void cmdUpdate_Click(object sender, EventArgs e)
         {
             try
             {

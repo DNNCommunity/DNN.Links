@@ -8,7 +8,7 @@
     <ModuleName>Links</ModuleName>
     <ModuleIconFile>img\links-icon.png</ModuleIconFile>
     <DotNetNukeDir>..\..\</DotNetNukeDir>
-    <DeployModuleFolder>$(DotNetNukeDir)\DesktopModules\Links</DeployModuleFolder>
+    <DeployModuleFolder>$(DotNetNukeDir)DesktopModules\Links</DeployModuleFolder>
     <InstallDir>$(MSBuildProjectDirectory)\Install</InstallDir>
     <BinDir>$(DotNetNukeDir)\bin</BinDir>
   </PropertyGroup>
@@ -34,7 +34,34 @@
   </Target>
   
   <Target Name="DeployModule">
-    <Beep></Beep>
+    <!-- <Delete Files="$(MSBuildProjectDirectory)\DebugDeploy.zip" /> -->
+    
+    <!-- Assemblies -->
+    <ItemGroup>
+      <DebugAssemblies Include="$(MSBuildProjectDirectory)\bin\*.dll;$(MSBuildProjectDirectory)\bin\*.pdb" />      
+    </ItemGroup>
+    <Copy SourceFiles="@(DebugAssemblies)" DestinationFolder="$(BinDir)" SkipUnchangedFiles="true" ContinueOnError="true" />
+    
+    <!-- Copy other files to deploy folder -->
+    <ItemGroup>      
+      <DeployInclude Include="**\*.ascx" />
+      <DeployInclude Include="**\*.asmx" />
+      <DeployInclude Include="**\*.css" />
+      <DeployInclude Include="**\*.xsl" />
+      <DeployInclude Include="**\*.html" />
+      <DeployInclude Include="**\*.htm" />
+      <DeployInclude Include="**\*.resx" />
+      <DeployInclude Include="**\*.xml" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;**\packages\**" />
+      <DeployInclude Include="**\*.aspx" />
+      <DeployInclude Include="**\*.js" />
+      <DeployInclude Include="**\*.txt" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;" />
+      <DeployInclude Include="**\images\**" />      
+      <DeployInclude Include="**\img\**" Exclude="packages\**" />
+    </ItemGroup>
+    <Zip Files="@(DeployInclude)" ZipFileName="$(MSBuildProjectDirectory)\DebugDeploy.zip"
+         WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Unzip ZipFileName="$(MSBuildProjectDirectory)\DebugDeploy.zip" TargetDirectory="$(DeployModuleFolder)" />
+    <Delete Files="$(MSBuildProjectDirectory)\DebugDeploy.zip" />
   </Target>
 
   <Target Name="CreateInstallPackages">

@@ -34,8 +34,8 @@ namespace DotNetNuke.Modules.Links.Components
                     xml.AppendFormat("<url>{0}</url>", XmlUtils.XMLEncode(link.Url));
                     xml.AppendFormat("<vieworder>{0}</vieworder>", XmlUtils.XMLEncode(link.ViewOrder.ToString()));
                     xml.AppendFormat("<description>{0}</description>", XmlUtils.XMLEncode(link.Description));
-                    xml.AppendFormat("<newwindow>{0}</newwindow>", XmlUtils.XMLEncode(link.GetNewWindow(module.PortalID).ToString()));
-                    xml.AppendFormat("<trackclicks>{0}</trackclicks>", XmlUtils.XMLEncode(link.GetTrackClicks(module.PortalID).ToString()));
+                    xml.AppendFormat("<newwindow>{0}</newwindow>", XmlUtils.XMLEncode(link.NewWindow.ToString()));
+                    xml.AppendFormat("<trackclicks>{0}</trackclicks>", XmlUtils.XMLEncode(link.TrackClicks.ToString()));
                     xml.Append("</link>");
                 }
 
@@ -70,15 +70,15 @@ namespace DotNetNuke.Modules.Links.Components
                     Description = xmlLink.SelectSingleNode("description").Value
                 };
 
-                link.SetNewWindow(Null.NullInteger, newWindow);
+                link.NewWindow = newWindow;
                 
                 try
                 {
-                    link.SetTrackClicks(Null.NullInteger, bool.Parse(xmlLink.SelectSingleNode("trackclicks").Value));
+                    link.TrackClicks = bool.Parse(xmlLink.SelectSingleNode("trackclicks").Value);
                 }
                 catch
                 {
-                    link.SetTrackClicks(Null.NullInteger, false);
+                    link.TrackClicks = false;
                 }
 
                 link.CreatedDate = DateTime.Now;
@@ -93,16 +93,16 @@ namespace DotNetNuke.Modules.Links.Components
                     link.Url,
                     LinkController.ConvertUrlType(DotNetNuke.Common.Globals.GetURLType(link.Url)), 
                     false,
-                    link.GetTrackClicks(Null.NullInteger), 
+                    link.TrackClicks, 
                     moduleID, 
-                    link.GetNewWindow(Null.NullInteger));
+                    link.NewWindow);
             }
         }
 
         public override IList<SearchDocument> GetModifiedSearchDocuments(ModuleInfo moduleInfo, DateTime beginDateUtc)
         {
             // TODO: Would be better performing if we had a last modified date and soft deletes
-            DotNetNuke.Services.Search.Internals.InternalSearchController.Instance.DeleteSearchDocumentsByModule(Null.NullInteger, moduleInfo.ModuleID, moduleInfo.ModuleDefID);
+            DotNetNuke.Services.Search.Internals.InternalSearchController.Instance.DeleteSearchDocumentsByModule(moduleInfo.PortalID, moduleInfo.ModuleID, moduleInfo.ModuleDefID);
             List<SearchDocument> searchDocuments = new List<SearchDocument>();
             var links = LinkController.GetLinks(moduleInfo.ModuleID);
             foreach (var link in links)

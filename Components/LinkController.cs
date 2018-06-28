@@ -227,8 +227,7 @@ namespace DotNetNuke.Modules.Links.Components
         {
             using (var ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Link>();
-                return rep.Find("WHERE ItemID = @0 AND ModuleID = @1", itemID, moduleId).FirstOrDefault();
+                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "dnnLinks_GetLink", itemID, moduleId).FirstOrDefault();
             }                
         }
 
@@ -236,8 +235,7 @@ namespace DotNetNuke.Modules.Links.Components
         {
             using (var ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Link>();
-                return rep.Find("WHERE ModuleID = @0 ORDER BY ViewOrder, Title", moduleId);
+                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "dnnLinks_GetLinks", moduleId);
             }
         }
 

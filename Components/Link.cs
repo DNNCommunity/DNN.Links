@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Modules.Links.Components
 {
@@ -22,8 +24,6 @@ namespace DotNetNuke.Modules.Links.Components
         [ColumnName("ModuleID")]
         public int ModuleId { get; set; }
 
-        public DateTime CreatedDate { get; set; }
-
         public string Title { get; set; }
 
         public string Url { get; set; }
@@ -34,6 +34,8 @@ namespace DotNetNuke.Modules.Links.Components
 
         public int CreatedByUser { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
         public int RefreshInterval { get; set; }
 
         public string GrantRoles { get; set; }
@@ -41,37 +43,9 @@ namespace DotNetNuke.Modules.Links.Components
         [IgnoreColumn]
         public string ImageURL { get; set; }
 
-        [IgnoreColumn]
-        public bool GetTrackClicks(int portalId)
-        {
-            {
-                var uc = new DotNetNuke.Common.Utilities.UrlController();
-                return uc.GetUrlTracking(portalId, this.Url, this.ModuleId).TrackClicks;
-            }
-        }
+        public bool TrackClicks { get; set; }
 
-        [IgnoreColumn]
-        public void SetTrackClicks(int portalId, bool trackClicks)
-        {
-            var uc = new DotNetNuke.Common.Utilities.UrlController();
-            var urlInfo = uc.GetUrlTracking(portalId, this.Url, this.ModuleId);
-            uc.UpdateUrl(portalId, this.Url, urlInfo.UrlType, urlInfo.LogActivity, trackClicks, this.ModuleId, urlInfo.NewWindow);
-        }
-
-        [IgnoreColumn]
-        public bool GetNewWindow(int portalId)
-        {
-            var uc = new DotNetNuke.Common.Utilities.UrlController();
-            return uc.GetUrlTracking(portalId, this.Url, this.ModuleId).NewWindow;            
-        }
-
-        [IgnoreColumn]
-        public void SetNewWindow(int portalId, bool newWindow)
-        {
-            var uc = new DotNetNuke.Common.Utilities.UrlController();
-            var urlInfo = uc.GetUrlTracking(portalId, this.Url, this.ModuleId);
-            uc.UpdateUrl(portalId, this.Url, urlInfo.UrlType, urlInfo.LogActivity, urlInfo.TrackClicks, this.ModuleId, newWindow);
-        }
+        public bool NewWindow { get; set; }        
 
         [IgnoreColumn]
         public bool RefreshContent

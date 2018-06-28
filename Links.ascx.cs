@@ -83,8 +83,8 @@ namespace DotNetNuke.Modules.Links
             {
                 Enums.ModuleContentTypes result = Enums.ModuleContentTypes.Links;
 
-                if (Settings[SettingName.ModuleContentType] != null)
-                    result = (Enums.ModuleContentTypes)Settings[SettingName.ModuleContentType];
+                if (Settings[SettingName.ModuleContentType] != null && int.TryParse(Settings[SettingName.ModuleContentType].ToString(), out int contenttype))
+                    result = (Enums.ModuleContentTypes)contenttype;
 
                 return result;
             }
@@ -128,33 +128,36 @@ namespace DotNetNuke.Modules.Links
             }
         }
 
-        public new bool IsEditable()
+        public new bool IsEditable
         {
-            switch (this.ModuleContentType)
+            get
             {
-                case Enums.ModuleContentTypes.Links:
-                    {
-                        if (base.IsEditable)
-                            return true;
-                        break;
-                    }
+                switch (this.ModuleContentType)
+                {
+                    case Enums.ModuleContentTypes.Links:
+                        {
+                            if (base.IsEditable)
+                                return true;
+                            break;
+                        }
 
-                case Enums.ModuleContentTypes.Menu:
-                    {
-                        return false;
-                    }
+                    case Enums.ModuleContentTypes.Menu:
+                        {
+                            return false;
+                        }
 
-                case Enums.ModuleContentTypes.Folder:
-                    {
-                        return false;
-                    }
+                    case Enums.ModuleContentTypes.Folder:
+                        {
+                            return false;
+                        }
 
-                case Enums.ModuleContentTypes.Friends:
-                    {
-                        return false;
-                    }                 
+                    case Enums.ModuleContentTypes.Friends:
+                        {
+                            return false;
+                        }
+                }
+                return false;
             }
-            return false;
         }
 
         public string DisplayMode
@@ -238,16 +241,16 @@ namespace DotNetNuke.Modules.Links
         ///         '''     [erikvb]    5/29/2008   Added strDescription parameter, inorder to prevent displaying info when description is empty
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        public string DisplayInfo(string strDescription)
+        public bool DisplayInfo(string strDescription)
         {
-            string result = "False";
+            bool result = false;
 
             try
             {
                 if ((System.Convert.ToString(Settings[SettingName.LinkDescriptionMode]) == Consts.ShowLinkDescriptionYes) && (!string.IsNullOrEmpty(strDescription)))
-                    result = "True";
+                    result = true;
                 else
-                    result = "False";
+                    result = false;
             }
             catch (Exception exc)
             {
@@ -341,36 +344,39 @@ namespace DotNetNuke.Modules.Links
         ///         ''' <history>
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        public string DisplayIcon()
+        public bool DisplayIcon
         {
-            string result = "False";
-
-            try
+            get
             {
-                switch (this.ModuleContentType)
+                bool result = false;
+
+                try
                 {
-                    case Enums.ModuleContentTypes.Links:
-                        {
-                            if (System.Convert.ToString(Settings[SettingName.Icon]) != string.Empty)
-                                result = "True";
-                            else
-                                result = "False";
-                            break;
-                        }
+                    switch (this.ModuleContentType)
+                    {
+                        case Enums.ModuleContentTypes.Links:
+                            {
+                                if (System.Convert.ToString(Settings[SettingName.Icon]) != string.Empty)
+                                    result = true;
+                                else
+                                    result = false;
+                                break;
+                            }
 
-                    case Enums.ModuleContentTypes.Folder:
-                        {
-                            result = "True";
-                            break;
-                        }
+                        case Enums.ModuleContentTypes.Folder:
+                            {
+                                result = true;
+                                break;
+                            }
+                    }
                 }
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
+                catch (Exception exc)
+                {
+                    Exceptions.ProcessModuleLoadException(this, exc);
+                }
 
-            return result;
+                return result;
+            }
         }
 
         /// -----------------------------------------------------------------------------
@@ -401,12 +407,15 @@ namespace DotNetNuke.Modules.Links
             return result;
         }
 
-        public string NoWrap()
+        public string NoWrap
         {
-            if (Settings["nowrap"].ToString() != "W")
-                return "style=\"white-space: nowrap\"";
+            get
+            {
+                if (Settings["nowrap"].ToString() != "W")
+                    return "style=\"white-space: nowrap\"";
 
-            return string.Empty;
+                return string.Empty;
+            }
         }
 
         public string Horizontal
@@ -435,20 +444,24 @@ namespace DotNetNuke.Modules.Links
             }
         }
 
-        public string ShowPopup
+        public bool ShowPopup
         {
             get
             {
-                string result = "false";
+                bool result = false;
 
                 if (this.LinkDescriptionMode == Consts.ShowLinkDescriptionJQuery)
-                    result = "true";
+                    result = true;
 
                 return result;
             }
         }
 
-
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            this.Load += Page_Load;
+        }       
 
         /// -----------------------------------------------------------------------------
         ///         ''' <summary>
@@ -490,7 +503,7 @@ namespace DotNetNuke.Modules.Links
                 }
 
                 if (!Page.IsPostBack)
-                {
+                {                    
                     if (Request.Params[Consts.FileId] != null)
                         this.FileId = System.Convert.ToInt32(Request.Params[Consts.FileId]);
 
@@ -536,7 +549,12 @@ namespace DotNetNuke.Modules.Links
 
                         case Enums.ModuleContentTypes.Menu:
                             {
-                                ArrayList tabsToShow = new ArrayList(TabController.GetTabsByParent(Int32.Parse(Settings[Consts.ModuleContentItem].ToString()), this.PortalId));
+                                List<TabInfo> tabsToShow = new List<TabInfo>();
+                                if (Settings.ContainsKey(Consts.ModuleContentItem)) {
+                                    string moduleContentItem = Settings[Consts.ModuleContentItem].ToString();
+                                    int.TryParse(moduleContentItem, out int moduleContentItemInt);
+                                    tabsToShow = TabController.GetTabsByParent(moduleContentItemInt, this.PortalId);
+                                }
 
                                 foreach (DotNetNuke.Entities.Tabs.TabInfo tabinfo in tabsToShow)
                                 {
@@ -572,9 +590,10 @@ namespace DotNetNuke.Modules.Links
                                     {
                                         Link link = new Link();
 
-                                        link.SetNewWindow(PortalId, false);
-                                        link.Title = tabinfo.TabName;
+                                        link.ModuleId = ModuleId;
                                         link.Url = DotNetNuke.Common.Globals.NavigateURL(tabinfo.TabID);
+                                        link.NewWindow = false;
+                                        link.Title = tabinfo.TabName;
                                         link.GrantRoles = ";";
                                         link.Description = tabinfo.Description;
                                         link.ItemId = tabinfo.TabID;
@@ -604,7 +623,7 @@ namespace DotNetNuke.Modules.Links
                                 {
                                     Link link = new Link();
 
-                                    link.SetNewWindow(PortalId, false);
+                                    link.NewWindow = false;
                                     link.Title = file.FileName;
                                     link.ItemId = file.FileId;
                                     link.Url = DotNetNuke.Common.Globals.NavigateURL(this.TabId, string.Empty, "FileId=" + file.FileId.ToString());
@@ -642,7 +661,7 @@ namespace DotNetNuke.Modules.Links
                                     foreach (LinksFriend lFriend in GetFriendsSource(currentUser))
                                     {
                                         Link link = new Link();
-                                        link.SetNewWindow(PortalId, false);
+                                        link.NewWindow = false;
                                         switch ((Enums.DisplayAttribute)(int)this.Settings[SettingName.DisplayAttribute])
                                         {
                                             case Enums.DisplayAttribute.Username:
@@ -685,8 +704,7 @@ namespace DotNetNuke.Modules.Links
                                     lvFriends.DataSource = GetFriendsSource(currentUser);
                                     lvFriends.DataBind();
                                 }
-
-                                if ((Enums.DisplayOrder)(int)this.Settings[SettingName.DisplayOrder] == Enums.DisplayOrder.ASC)
+                                if ((Enums.DisplayOrder)int.Parse(Settings[SettingName.DisplayOrder].ToString()) == Enums.DisplayOrder.ASC)
                                     links = links.OrderBy(l => l.Title).ToList();
                                 else
                                     links = links.OrderByDescending(l => l.Title).ToList();
@@ -696,7 +714,7 @@ namespace DotNetNuke.Modules.Links
 
                     if (this.DisplayMode == Consts.DisplayModeDropdown)
                     {
-                        if (IsEditable())
+                        if (IsEditable)
                             cmdEdit.Visible = true;
                         else
                             cmdEdit.Visible = false;
@@ -811,7 +829,7 @@ namespace DotNetNuke.Modules.Links
         ///         ''' 	[cnurse]	9/23/2004	Moved Links to a separate Project
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        private void cmdEdit_Click(object sender, System.Web.UI.ImageClickEventArgs e)
+        public void cmdEdit_Click(object sender, System.Web.UI.ImageClickEventArgs e)
         {
             try
             {
@@ -834,7 +852,7 @@ namespace DotNetNuke.Modules.Links
         ///         ''' 	[cnurse]	9/23/2004	Moved Links to a separate Project
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        private void cmdGo_Click(object sender, System.EventArgs e)
+        public void cmdGo_Click(object sender, System.EventArgs e)
         {
             try
             {
@@ -849,7 +867,7 @@ namespace DotNetNuke.Modules.Links
                         case Enums.ModuleContentTypes.Links:
                             {
                                 objLink = LinkController.GetLink(int.Parse(cboLinks.SelectedValue), ModuleId);
-                                strURL = FormatURL(objLink.Url, objLink.GetTrackClicks(PortalId));
+                                strURL = FormatURL(objLink.Url, objLink.TrackClicks);
                                 break;
                             }
 
@@ -861,7 +879,7 @@ namespace DotNetNuke.Modules.Links
                                 DotNetNuke.Entities.Tabs.TabInfo tabInfo = tabCont.GetTab(int.Parse(cboLinks.SelectedItem.Value), this.PortalId, false);
 
                                 strURL = DotNetNuke.Common.Globals.NavigateURL(tabInfo.TabID);
-                                objLink.SetTrackClicks(PortalId, false);
+                                objLink.TrackClicks = false;
                                 break;
                             }
 
@@ -882,7 +900,7 @@ namespace DotNetNuke.Modules.Links
 
                     if (objLink != null)
                     {
-                        if (objLink.GetNewWindow(PortalId))
+                        if (objLink.NewWindow)
                             Page.ClientScript.RegisterClientScriptBlock(typeof(string), "OpenLink", "window.open('" + strURL + "','_blank')", true);
                         else
                             Response.Redirect(strURL, true);
@@ -905,7 +923,7 @@ namespace DotNetNuke.Modules.Links
         ///         ''' 	[cnurse]	9/23/2004	Moved Links to a separate Project
         ///         ''' </history>
         ///         ''' -----------------------------------------------------------------------------
-        private void cmdInfo_Click(object sender, System.EventArgs e)
+        public void cmdInfo_Click(object sender, System.EventArgs e)
         {
             try
             {
@@ -1003,14 +1021,34 @@ namespace DotNetNuke.Modules.Links
         {
             try
             {
+                var link = e.Item.DataItem as Link;
+
+                if (e.Item.ItemType == ListItemType.Header)
+                {
+                    var header = e.Item.FindControl("ulHeader") as HtmlControl;
+                    header.Attributes["class"] += " " + Horizontal;
+                }
                 if (e.Item.ItemType == ListItemType.Item | e.Item.ItemType == ListItemType.AlternatingItem)
                 {
                     HtmlAnchor linkHyp = (HtmlAnchor)e.Item.FindControl("linkHyp");
                     Label lblMoreInfo = (Label)e.Item.FindControl("lblMoreInfo");
                     Panel pnlDescription = (Panel)e.Item.FindControl("pnlDescription");
+                    var lbldescrdiv = e.Item.FindControl("lbldescrdiv") as Label;
+                    var spnSelect = e.Item.FindControl("spnSelect") as HtmlElement;
+                    var radToolTip = e.Item.FindControl("radToolTip") as RadToolTip;
 
                     lblMoreInfo.Attributes.Add("onclick", "toggleVisibility('" + pnlDescription.ClientID + "')");
                     lblMoreInfo.Attributes.Add("style", "cursor: pointer;");
+                    lblMoreInfo.Visible = !ShowPopup;
+
+                    linkHyp.HRef = FormatURL(link.Url, link.TrackClicks);
+                    linkHyp.Target = link.NewWindow ? "_blank" : "_self";
+
+                    lbldescrdiv.Text = HtmlDecode(link.Description);
+
+                    spnSelect.Visible = DisplayInfo(link.Description);
+
+                    radToolTip.Visible = (ShowPopup && link.Description != "");
                 }
             }
 
@@ -1101,18 +1139,18 @@ namespace DotNetNuke.Modules.Links
             return "window.location='" + profileUrl + "'";
         }
 
-        public string MakeVisible(string status)
+        public bool MakeVisible(string status)
         {
             if (status.ToString().Equals("Accepted"))
-                return "True";
+                return true;
             else
-                return "False";
+                return false;
         }
 
-        public string MakeAcceptFriendRequestVisible(string status, int userId)
+        public bool MakeAcceptFriendRequestVisible(string status, int userId)
         {
             if (status.ToString().Equals("Accepted"))
-                return "False";
+                return false;
             else
             {
                 UserInfo currentUser = UserInfo;
@@ -1120,9 +1158,9 @@ namespace DotNetNuke.Modules.Links
                 UserRelationship relationship = RelationshipController.Instance.GetFriendRelationship(currentUser, relationUser);
                 if (currentUser.UserID != relationship.UserId)
                     // current user not initialize
-                    return "True";
+                    return true;
                 else
-                    return "False";
+                    return false;
             }
         }
 

@@ -128,13 +128,17 @@ namespace DotNetNuke.Modules.Links
                     else
                         optUsePermissions.SelectedIndex = 0;
 
-                    if (System.Convert.ToString(ModuleSettings[SettingName.ModuleContentType]) != string.Empty)
+                    if (ModuleSettings[SettingName.ModuleContentType] != null)
                     {
-                        optLinkModuleType.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.ModuleContentType])).Selected = true;
-                        pnlIcon.Visible = ShowIconPanel;
+                        string moduleContenttype = ModuleSettings[SettingName.ModuleContentType].ToString();
+                        if (!string.IsNullOrEmpty(moduleContenttype))
+                        {
+                            optLinkModuleType.Items.FindByValue(moduleContenttype).Selected = true;
+                            pnlIcon.Visible = ShowIconPanel;
+                            LoadContentData(System.Convert.ToString(ModuleSettings[SettingName.ModuleContentType]));
+                        }
                     }
 
-                    LoadContentData(System.Convert.ToString(ModuleSettings[SettingName.ModuleContentType]));
                 }
             }
             catch (Exception exc)
@@ -466,7 +470,7 @@ namespace DotNetNuke.Modules.Links
 
 
 
-        protected void optLinkModuleType_SelectedIndexChanged(object sender, System.EventArgs e)
+        public void optLinkModuleType_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             try
             {
@@ -480,7 +484,7 @@ namespace DotNetNuke.Modules.Links
             }
         }
 
-        protected void optControl_SelectedIndexChanged(object sender, System.EventArgs e)
+        public void optControl_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             pnlWrap.Visible = ShowWrapPanel;
 
@@ -490,7 +494,7 @@ namespace DotNetNuke.Modules.Links
             trOptView.Visible = optControl.SelectedValue != Consts.DisplayModeDropdown;
         }
 
-        protected void optTypeContentSelection_SelectedIndexChanged(object sender, System.EventArgs e)
+        public void optTypeContentSelection_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if ((Enums.ModuleContentTypes)int.Parse(optLinkModuleType.SelectedValue) == Enums.ModuleContentTypes.Friends)
             {

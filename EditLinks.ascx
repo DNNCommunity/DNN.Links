@@ -47,7 +47,7 @@
         </td>
         <td width="365">
             <asp:LinkButton ID="lbtGetContent" runat="server" CssClass="SubHead" Visible="true"
-                ResourceKey="lbtGetContent" />
+                ResourceKey="lbtGetContent" OnClick="lbtGetContent_Click" />
         </td>
     </tr>
     <tr>
@@ -128,13 +128,20 @@
     </tr>
 </table>
 <p>
-    <DNNWC:CommandButton ID="cmdUpdate" runat="server" ImageUrl="~/images/save.gif" ResourceKey="cmdUpdate" />
+    <asp:LinkButton ID="cmdUpdate" runat="server" OnClick="cmdUpdate_Click" >
+        <asp:Image runat="server" ImageUrl="~/images/save.gif" />
+        <asp:Label runat="server" ResourceKey="cmdUpdate" />
+    </asp:LinkButton>    
+    &nbsp;    
+    <asp:LinkButton ID="cmdCancel" runat="server" OnClick="cmdCancel_Click" CausesValidation="false">
+        <asp:Image runat="server" ImageUrl="~/images/action_export.gif" />
+        <asp:Label runat="server" ResourceKey="cmdCancel" />
+    </asp:LinkButton>
     &nbsp;
-    <DNNWC:CommandButton ID="cmdCancel" ResourceKey="cmdCancel" runat="server" CausesValidation="False"
-        ImageUrl="~/images/action_export.gif" />
-    &nbsp;
-    <DNNWC:CommandButton ID="cmdDelete" ResourceKey="cmdDelete" runat="server" CssClass="CommandButton"
-        CausesValidation="False" ImageUrl="~/images/delete.gif" />
+    <asp:LinkButton ID="cmdDelete" runat="server" OnClick="cmdDelete_Click" CausesValidation="false">
+        <asp:Image runat="server" ImageUrl="~/images/delete.gif" />
+        <asp:Label runat="server" ResourceKey="cmdDelete" />
+    </asp:LinkButton>
 </p>
 <Portal:Audit ID="ctlAudit" runat="server" />
 <br>

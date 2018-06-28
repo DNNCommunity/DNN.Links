@@ -9,14 +9,14 @@
         </td>
         <td valign="bottom">
             <asp:DropDownList ID="optLinkModuleType" runat="server" CssClass="Normal" Width="100"
-                AutoPostBack="true">
+                AutoPostBack="true" OnSelectedIndexChanged="optLinkModuleType_SelectedIndexChanged">
                 <asp:ListItem resourcekey="Link" Value="1">Link</asp:ListItem>
                 <asp:ListItem resourcekey="Menu" Value="2">Menu</asp:ListItem>
                 <asp:ListItem resourcekey="Folder" Value="3">Folder</asp:ListItem>
                 <asp:ListItem resourcekey="Friends" Value="4">Friends</asp:ListItem>
             </asp:DropDownList>
             <asp:DropDownList ID="optTypeContentSelection" runat="server" CssClass="Normal" Width="200"
-                Visible="false" AutoPostBack="true">
+                Visible="false" AutoPostBack="true" OnSelectedIndexChanged="optTypeContentSelection_SelectedIndexChanged">
             </asp:DropDownList>
         </td>
     </tr>
@@ -57,7 +57,7 @@
         </td>
         <td valign="bottom">
             <asp:RadioButtonList ID="optControl" runat="server" CssClass="NormalTextBox" AutoPostBack="true"
-                RepeatDirection="Horizontal">
+                RepeatDirection="Horizontal" OnSelectedIndexChanged="optControl_SelectedIndexChanged" >
                 <asp:ListItem resourcekey="List" Value="L">List</asp:ListItem>
                 <asp:ListItem resourcekey="Dropdown" Value="D">Dropdown</asp:ListItem>
             </asp:RadioButtonList>
