@@ -83,6 +83,7 @@ namespace DotNetNuke.Modules.Links.Components
 
                 link.CreatedDate = DateTime.Now;
                 link.CreatedByUser = userId;
+                LinkController.DeleteLinkIfItExistsForModule(moduleID, link);
                 LinkController.AddLink(link);
 
                 // url tracking

@@ -265,5 +265,16 @@ namespace DotNetNuke.Modules.Links.Components
                     }
             }
         }
+
+        public static void DeleteLinkIfItExistsForModule(int moduleId, Link link)
+        {
+            foreach (var oldLink in GetLinks(moduleId))
+            {
+                if (oldLink.Title == link.Title && oldLink.Url == link.Url)
+                {
+                    DeleteLink(link.ItemId, moduleId);
+                }
+            }
+        }
     }
 }

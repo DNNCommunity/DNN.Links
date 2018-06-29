@@ -411,7 +411,7 @@ namespace DotNetNuke.Modules.Links
         {
             get
             {
-                if (Settings["nowrap"].ToString() != "W")
+                if (Settings.ContainsKey("nowrap") && Settings["nowrap"].ToString() != "W")
                     return "style=\"white-space: nowrap\"";
 
                 return string.Empty;
@@ -424,7 +424,7 @@ namespace DotNetNuke.Modules.Links
             {
                 string result = string.Empty;
 
-                if (System.Convert.ToString(Settings[SettingName.Direction]) == Consts.DirectionHorizontal)
+                if (Settings.ContainsKey(SettingName.Direction) && System.Convert.ToString(Settings[SettingName.Direction]) == Consts.DirectionHorizontal)
                     result = "Horizontal";
 
                 return result;
@@ -1023,18 +1023,18 @@ namespace DotNetNuke.Modules.Links
             {
                 var link = e.Item.DataItem as Link;
 
-                if (e.Item.ItemType == ListItemType.Header)
-                {
-                    var header = e.Item.FindControl("ulHeader") as HtmlControl;
-                    header.Attributes["class"] += " " + Horizontal;
-                }
+                //if (e.Item.ItemType == ListItemType.Header)
+                //{
+                //    var header = e.Item.FindControl("ulHeader") as HtmlControl;
+                //    header.Attributes["class"] += " " + Horizontal;
+                //}
                 if (e.Item.ItemType == ListItemType.Item | e.Item.ItemType == ListItemType.AlternatingItem)
                 {
                     HtmlAnchor linkHyp = (HtmlAnchor)e.Item.FindControl("linkHyp");
                     Label lblMoreInfo = (Label)e.Item.FindControl("lblMoreInfo");
                     Panel pnlDescription = (Panel)e.Item.FindControl("pnlDescription");
                     var lbldescrdiv = e.Item.FindControl("lbldescrdiv") as Label;
-                    var spnSelect = e.Item.FindControl("spnSelect") as HtmlElement;
+                    var spnSelect = e.Item.FindControl("spnSelect");
                     var radToolTip = e.Item.FindControl("radToolTip") as RadToolTip;
 
                     lblMoreInfo.Attributes.Add("onclick", "toggleVisibility('" + pnlDescription.ClientID + "')");

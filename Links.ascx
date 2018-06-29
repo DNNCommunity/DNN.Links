@@ -2,14 +2,14 @@
     AutoEventWireup="true" Explicit="True" Codebehind="Links.ascx.cs" %>
 <%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<asp:Panel ID="pnlList" runat="server" CssClass="link_module">
-    <asp:Repeater ID="lstLinks" runat="server">
+<asp:Panel ID="pnlList" runat="server" CssClass="link_module" >
+    <asp:Repeater ID="lstLinks" runat="server" OnItemDataBound="lstLinks_ItemDataBound">
         <HeaderTemplate>
-            <ul id="ulHeader" class="linklist">
+            <ul id="ulHeader" class="linklist <%# Horizontal %>" >
         </HeaderTemplate>
         <ItemTemplate>
             <li id="itemLi" class="linkitem <%# Horizontal %>" <%# NoWrap %>>
-                <asp:HyperLink ID="editLink" NavigateUrl='<%= EditURL("ItemID",Eval("ItemID")) %>'
+                <asp:HyperLink ID="editLink" NavigateUrl='<% EditURL("ItemID",Eval("ItemID")) %>'
                     Visible="<%# IsEditable %>" runat="server">
                     <asp:Image ID="editLinkImage" ImageUrl="~/images/edit.gif" AlternateText="Edit" Visible="<%# IsEditable %>"
                         runat="server" />

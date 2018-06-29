@@ -11,8 +11,31 @@
         <email>support@dotnetnuke.com</email>
       </owner>
       <license src="License.htm" />
-      <releaseNotes src="ReleaseNotes.htm" />      
+      <releaseNotes src="ReleaseNotes.htm" />
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="coreVersion">07.02.00</dependency>
+      </dependencies>
       <components>
+        <component type="Config">
+          <config>
+            <configFile>web.config</configFile>
+            <install>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/system.web/compilation/codeSubDirectories/add[@directoryName='Links']" action="remove" />
+                </nodes>
+              </configuration>
+            </install>
+            <uninstall>
+              <configuration>
+                <nodes />
+              </configuration>
+            </uninstall>
+          </config>
+        </component>
+        <component type="Cleanup" version="07.00.00" fileName="Cleanup.07.00.00.txt">          
+        </component>
         <component type="Script">
           <scripts>
             <basePath>DesktopModules\Links</basePath>
@@ -124,18 +147,18 @@
             <attributes>
               <businessControllerClass>DotNetNuke.Modules.Links.Components.FeatureController</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>03.01.00,03.03.00,03.03.06,04.00.00,04.00.01,04.01.00,04.01.01</upgradeVersionsList>
+              <upgradeVersionsList>03.01.00,03.03.00,03.03.06,04.00.00,04.00.01,04.01.00,04.01.01,07.00.00</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>
-      <component type="Assembly">
-        <assemblies>
-          <assembly>
-            <name>DotNetNuke.Modules.Links.dll</name>
-            <path>bin</path>
-          </assembly>
-        </assemblies>
-      </component>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <name>DotNetNuke.Modules.Links.dll</name>
+              <path>bin</path>
+            </assembly>
+          </assemblies>
+        </component>
       </components>
     </package>
   </packages>

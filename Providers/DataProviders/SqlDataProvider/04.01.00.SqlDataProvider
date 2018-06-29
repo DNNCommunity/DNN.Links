@@ -140,3 +140,4 @@ SET    CreatedByUser   = @UserId,
        Description     = @Description,
        RefreshInterval = @RefreshInterval
 WHERE  ItemId = @ItemId
+GO

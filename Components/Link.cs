@@ -43,8 +43,10 @@ namespace DotNetNuke.Modules.Links.Components
         [IgnoreColumn]
         public string ImageURL { get; set; }
 
+        [ReadOnlyColumn]
         public bool TrackClicks { get; set; }
 
+        [ReadOnlyColumn]
         public bool NewWindow { get; set; }        
 
         [IgnoreColumn]
