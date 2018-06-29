@@ -9,8 +9,7 @@
         </HeaderTemplate>
         <ItemTemplate>
             <li id="itemLi" class="linkitem <%# Horizontal %>" <%# NoWrap %>>
-                <asp:HyperLink ID="editLink" NavigateUrl='<% EditURL("ItemID",Eval("ItemID")) %>'
-                    Visible="<%# IsEditable %>" runat="server">
+                <asp:HyperLink ID="editLink" Visible="<%# IsEditable %>" runat="server">
                     <asp:Image ID="editLinkImage" ImageUrl="~/images/edit.gif" AlternateText="Edit" Visible="<%# IsEditable %>"
                         runat="server" />
                 </asp:HyperLink>
