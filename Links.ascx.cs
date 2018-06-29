@@ -1036,6 +1036,7 @@ namespace DotNetNuke.Modules.Links
                     var lbldescrdiv = e.Item.FindControl("lbldescrdiv") as Label;
                     var spnSelect = e.Item.FindControl("spnSelect");
                     var radToolTip = e.Item.FindControl("radToolTip") as RadToolTip;
+                    var editLink = e.Item.FindControl("editLink") as HyperLink;
 
                     lblMoreInfo.Attributes.Add("onclick", "toggleVisibility('" + pnlDescription.ClientID + "')");
                     lblMoreInfo.Attributes.Add("style", "cursor: pointer;");
@@ -1049,6 +1050,8 @@ namespace DotNetNuke.Modules.Links
                     spnSelect.Visible = DisplayInfo(link.Description);
 
                     radToolTip.Visible = (ShowPopup && link.Description != "");
+
+                    editLink.NavigateUrl = EditUrl("ItemId", link.ItemId.ToString());
                 }
             }
 
