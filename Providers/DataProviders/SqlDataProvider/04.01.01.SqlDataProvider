@@ -146,3 +146,4 @@ SET    CreatedByUser   = @UserId,
        RefreshInterval = @RefreshInterval,
        GrantRoles       = @GrantRoles
 WHERE  ItemId = @ItemId
+GO

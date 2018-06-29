@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- WARING, IF YOU EDIT THE TARGETS FILE YOU NEED TO CLOSE/OPEN YOUR THE PROJECT FOR THE CHANGES TO TAKE EFFECT -->
+
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CompanyName>DotNetNuke</CompanyName>
+    <ModuleName>Links</ModuleName>
+    <ModuleIconFile>img\links-icon.png</ModuleIconFile>
+    <DotNetNukeDir>..\..\</DotNetNukeDir>
+    <DeployModuleFolder>$(DotNetNukeDir)DesktopModules\Links</DeployModuleFolder>
+    <InstallDir>$(MSBuildProjectDirectory)\Install</InstallDir>
+    <BinDir>$(DotNetNukeDir)\bin</BinDir>
+  </PropertyGroup>
+  
+  
+  
+  
+  
+  <Target Name="PackageModule">
+    <CallTarget Targets="DeployModule" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+    <CallTarget Targets="CreateInstallPackages" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
+  </Target>
+
+  <Target Name="DeleteTempFiles">
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\ResourcesZip" />
+    <ItemGroup>
+      <CleanupInclude Include="DNN_$(ModuleName)_*_Install.zip" Exclude="Install\**" />
+      <CleanupInclude Include="DNN_$(ModuleName)_*_Source.zip" Exclude="Install\**" />
+    </ItemGroup>
+    <Delete Files="@(CleanupInclude)" />
+    <Delete Files="$(MSBuildProjectDirectory)\Resources.zip" />
+  </Target>
+  
+  <Target Name="DeployModule">
+    <!-- <Delete Files="$(MSBuildProjectDirectory)\DebugDeploy.zip" /> -->
+    
+    <!-- Assemblies -->
+    <ItemGroup>
+      <DebugAssemblies Include="$(MSBuildProjectDirectory)\bin\*.dll;$(MSBuildProjectDirectory)\bin\*.pdb" />      
+    </ItemGroup>
+    <Copy SourceFiles="@(DebugAssemblies)" DestinationFolder="$(BinDir)" SkipUnchangedFiles="true" ContinueOnError="true" />
+    
+    <!-- Copy other files to deploy folder -->
+    <ItemGroup>      
+      <DeployInclude Include="**\*.ascx" />
+      <DeployInclude Include="**\*.asmx" />
+      <DeployInclude Include="**\*.css" />
+      <DeployInclude Include="**\*.xsl" />
+      <DeployInclude Include="**\*.html" />
+      <DeployInclude Include="**\*.htm" />
+      <DeployInclude Include="**\*.resx" />
+      <DeployInclude Include="**\*.xml" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;**\packages\**" />
+      <DeployInclude Include="**\*.aspx" />
+      <DeployInclude Include="**\*.js" />
+      <DeployInclude Include="**\*.txt" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;" />
+      <DeployInclude Include="**\images\**" />      
+      <DeployInclude Include="**\img\**" Exclude="packages\**" />
+    </ItemGroup>
+    <Zip Files="@(DeployInclude)" ZipFileName="$(MSBuildProjectDirectory)\DebugDeploy.zip"
+         WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Unzip ZipFileName="$(MSBuildProjectDirectory)\DebugDeploy.zip" TargetDirectory="$(DeployModuleFolder)" />
+    <Delete Files="$(MSBuildProjectDirectory)\DebugDeploy.zip" />
+  </Target>
+
+  <Target Name="CreateInstallPackages">
+    
+    <!-- Set the module version -->
+    <XmlRead Prefix="n" Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+             XPath="dotnetnuke/packages/package[1]/@version"
+             XmlFileName="$(MSBuildProjectDirectory)\DNN_Links.dnn">
+      <Output TaskParameter="Value" PropertyName="ModuleVersion" />
+    </XmlRead>
+    <AssemblyInfo AssemblyVersion="$(ModuleVersion).00" CodeLanguage="CS"></AssemblyInfo>
+    <Message Text="MSBUILD: Assembly Version set to: $(ModuleVersion)" Importance="high"></Message>
+
+    <!-- Remove the temporary folders in case previous build failed in the middle of an operation-->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="DeleteTempFiles" Properties="step=start"></MSBuild>
+    
+    <!-- Set the files to include in install package-->
+    <ItemGroup>
+      <InstallInclude Include="**\*.ascx" Exclude="packages\**" />
+      <InstallInclude Include="**\*.asmx" Exclude="packages\**" />
+      <InstallInclude Include="**\*.css" Exclude="packages\**" />
+      <InstallInclude Include="**\*.html" Exclude="packages\**;Tests\**" />
+      <InstallInclude Include="**\*.htm" Exclude="packages\**;package\**" />
+      <InstallInclude Include="**\*.resx" Exclude="packages\**" />
+      <InstallInclude Include="**\*.aspx" Exclude="packages\**" />
+      <InstallInclude Include="**\*.js" Exclude="packages\**" />
+      <InstallInclude Include="**\*.txt"  Exclude="**\obj\**;**\_ReSharper*\**;packages\**;**\.git\**;" />
+      <InstallInclude Include="**\img\**" Exclude="packages\**" />
+    </ItemGroup>
+
+    <!-- Set the files to include in the source-->
+    <ItemGroup>
+      <SourceInclude Include="**\*.ascx" />
+      <SourceInclude Include="**\*.asmx" />
+      <SourceInclude Include="**\*.css" />
+      <SourceInclude Include="**\*.xsl" />
+      <SourceInclude Include="**\*.html" />
+      <SourceInclude Include="**\*.htm" />
+      <SourceInclude Include="**\*.resx" />
+      <SourceInclude Include="**\*.xml" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;**\packages\**" />
+      <SourceInclude Include="**\*.aspx" />
+      <SourceInclude Include="**\*.js" />
+      <SourceInclude Include="**\*.txt" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;" />
+      <SourceInclude Include="**\images\**" />
+      <SourceInclude Include="**\*.cs" Exclude="**\obj\**" />
+      <SourceInclude Include="**\*.cs.designer" />
+      <SourceInclude Include="**\*.csproj" />
+      <SourceInclude Include="**\*.targets" Exclude="**\packages\**" />
+      <SourceInclude Include="**\*.sln" />
+      <SourceInclude Include="**\img\**" Exclude="packages\**" />
+    </ItemGroup>
+
+    <!-- Files for setup -->
+    <CreateItem Include="$(MSBuildProjectDirectory)\DNN_Links.dnn">
+      <Output TaskParameter="Include" ItemName="PackageManifestFiles" />
+    </CreateItem>
+    <CreateItem Include="**\License.htm">
+      <Output TaskParameter="Include" ItemName="PackageTxtFiles" />
+    </CreateItem>
+    <CreateItem Include="**\ReleaseNotes.htm">
+      <Output TaskParameter="Include" ItemName="PackageTxtFiles" />
+    </CreateItem>
+    <CreateItem Include="**\*.SqlDataProvider">
+      <Output TaskParameter="Include" ItemName="SqlDataProviderFiles" />
+    </CreateItem>
+    <CreateItem Include="**\Cleanup.*.*.*.txt">
+      <Output TaskParameter="Include" ItemName="CleanupFiles" />
+    </CreateItem>
+    
+    <!-- Grab files for install setup -->
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin"/>
+    <Copy SourceFiles="@(SqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\%(RecursiveDir)" />
+    <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageTxtFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(CleanupFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+
+    <!-- Create the install resources.zip file -->
+    <Copy SourceFiles="@(InstallInclude)" DestinationFolder="$(MSBuildProjectDirectory)\ResourcesZip\%(RecursiveDir)" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\ResourcesZip\**\*.*">
+      <Output TaskParameter="Include" ItemName="ResourcesContent" />
+    </CreateItem>
+    <Zip Files="@(ResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\ResourcesZip" ZipFileName="Resources.zip"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Resources.zip" DestinationFolder="package/" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\package\**\*.*">
+      <Output TaskParameter="Include" ItemName="OutputContent" />
+    </CreateItem>
+    
+    <!-- Create the install package -->
+    <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="DNN_Links_$(ModuleVersion)_Install.zip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\DNN_Links_$(ModuleVersion)_Install.zip" DestinationFolder="install/" />
+    
+    <!-- Remove the temporary folders-->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="DeleteTempFiles" Properties="step=install"></MSBuild>
+
+    <!-- Grab files for source setup -->
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin"/>
+    <Copy SourceFiles="@(SqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\%(RecursiveDir)" />
+    <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageTxtFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(CleanupFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+
+    <!-- Create the sources resources.zip file -->
+    <Copy SourceFiles="@(SourceInclude)" DestinationFolder="$(MSBuildProjectDirectory)\ResourcesZip\%(RecursiveDir)" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\ResourcesZip\**\*.*">
+      <Output TaskParameter="Include" ItemName="SourceResourcesContent" />
+    </CreateItem>
+    <Zip Files="@(SourceResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\ResourcesZip" ZipFileName="Resources.zip"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Resources.zip" DestinationFolder="package/" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\package\**\*.*">
+      <Output TaskParameter="Include" ItemName="SourceOutputContent" />
+    </CreateItem>
+
+    <!-- Create the install package -->
+    <Zip Files="@(SourceOutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="DNN_Links_$(ModuleVersion)_Source.zip" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\DNN_Links_$(ModuleVersion)_Source.zip" DestinationFolder="install/" />
+
+    <!-- Remove the temporary folders-->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="DeleteTempFiles" Properties="step=source"></MSBuild>
+    <CallTarget Targets="DeleteTempFiles" UseResultsCache="false" />
+  </Target>
+</Project>
