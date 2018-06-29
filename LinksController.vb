@@ -66,6 +66,15 @@ Namespace DotNetNuke.Modules.Links
 
         End Sub
 
+        Public Sub DeleteLinkIfItExistsForModule(ByVal ModuleId As Integer, ByVal objLink as LinkInfo)
+            
+            For Each oldLink In GetLinks(ModuleId)
+                If oldLink.Title = objLink.Title And oldLink.Url = objLink.Url
+                    DeleteLink(oldLink.ItemID, ModuleId)
+                End If
+            Next
+        End Sub
+
         ''' <summary>
         ''' Function evaluates the targets content and tries to build a summary about the targets title and description.
         ''' </summary>
@@ -387,6 +396,7 @@ Namespace DotNetNuke.Modules.Links
                 End Try
                 objLink.CreatedDate = DateTime.Now()
                 objLink.CreatedByUser = UserId
+                DeleteLinkIfItExistsForModule(ModuleID, objLink)
                 AddLink(objLink)
 
                 ' url tracking
