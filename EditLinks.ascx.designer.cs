@@ -37,7 +37,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.LabelControl plTitle;
+        protected global::System.Web.UI.UserControl plTitle;
         
         /// <summary>
         /// txtTitle control.
@@ -64,7 +64,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.LabelControl plURL;
+        protected global::System.Web.UI.UserControl plURL;
         
         /// <summary>
         /// ctlURL control.
@@ -91,7 +91,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.LabelControl plGetContent;
+        protected global::System.Web.UI.UserControl plGetContent;
         
         /// <summary>
         /// lbtGetContent control.
@@ -136,7 +136,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.LabelControl plGrantRoles;
+        protected global::System.Web.UI.UserControl plGrantRoles;
         
         /// <summary>
         /// cblGrantRoles control.
@@ -154,7 +154,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.LabelControl plDescription;
+        protected global::System.Web.UI.UserControl plDescription;
         
         /// <summary>
         /// txtDescription control.
@@ -172,7 +172,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DotNetNuke.UI.UserControls.LabelControl plViewOrder;
+        protected global::System.Web.UI.UserControl plViewOrder;
         
         /// <summary>
         /// ddlViewOrder control.

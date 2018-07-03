@@ -1,17 +1,18 @@
 <%--[alex - 09/01/2009] changed CodeBehind to CodeFile (required for WPA projects)--%>
-<%@ Control Language="C#" AutoEventWireup="false" Explicit="True"
+<%@ Control Language="C#" AutoEventWireup="true" Explicit="True"
     Inherits="DotNetNuke.Modules.Links.EditLinks" Codebehind="EditLinks.ascx.cs" %>
-<%@ Register Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" TagPrefix="DNNWC" %>
+<%@ Register Assembly="DotNetNuke" Namespace="DotNetNuke.UI.UserControls" TagPrefix="dnn" %>
 <%@ Register TagPrefix="Portal" TagName="Tracking" Src="~/controls/URLTrackingControl.ascx" %>
 <%@ Register TagPrefix="Portal" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
 <%@ Register TagPrefix="Portal" TagName="URL" Src="~/controls/URLControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web.Deprecated" %>
 <table width="100%" cellspacing="0" cellpadding="0" border="0" summary="Edit Links Design Table">
     <tr>
         <td colspan="2">
             <asp:Panel ID="pnlDynamicContent" runat="server">
-                <asp:Label ID="plDynamicContent" runat="server" Text="This Module is configured to show dynamic Data. Please use Modulesettings to change." />
+                <asp:Label ID="plDynamicContent" runat="server" ResourceKey="plDynamicContent" Text="This Module is configured to show dynamic Data. Please use Modulesettings to change." />
             </asp:Panel>
             <br/>
         </td>
