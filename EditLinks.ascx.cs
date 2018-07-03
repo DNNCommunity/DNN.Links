@@ -39,10 +39,11 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.UserControls;
 
 namespace DotNetNuke.Modules.Links
 {
-
+    
     /// -----------------------------------------------------------------------------
     ///     ''' <summary>
     /// 	''' The EditLinks PortalModuleBase is used to manage the Links
@@ -57,6 +58,10 @@ namespace DotNetNuke.Modules.Links
     /// 	''' -----------------------------------------------------------------------------
     public partial class EditLinks : PortalModuleBase
     {
+        //UrlControl ctlURL;
+        //ModuleAuditControl ctlAudit;
+        //URLTrackingControl ctlTracking;
+
         private int itemId = -1;
 
         protected override void OnInit(EventArgs e)
@@ -78,6 +83,8 @@ namespace DotNetNuke.Modules.Links
         ///         ''' -----------------------------------------------------------------------------
         private void Page_Load(System.Object sender, System.EventArgs e)
         {
+           
+
             try
             {
                 // Determine ItemId of Link to Update
@@ -128,9 +135,13 @@ namespace DotNetNuke.Modules.Links
                                 ddlViewOrderLinks.SelectedValue = LinkController.GetLinkByHigherViewOrder(objLink.ViewOrder, this.ModuleId).ToString();
 
                                 if (int.Parse(ddlViewOrderLinks.SelectedValue) < objLink.ViewOrder)
+                                { 
                                     ddlViewOrder.SelectedValue = "A";
+                                }
                                 else
+                                { 
                                     ddlViewOrder.SelectedValue = "B";
+                                }
                             }
 
                             txtTitle.Text = objLink.Title.ToString();
