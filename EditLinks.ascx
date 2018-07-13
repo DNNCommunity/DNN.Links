@@ -11,7 +11,7 @@
     <tr>
         <td colspan="2">
             <asp:Panel ID="pnlDynamicContent" runat="server">
-                <asp:Label ID="plDynamicContent" runat="server" Text="This Module is configured to show dynamic Data. Please use Modulesettings to change." />
+                <asp:Label ID="plDynamicContent" runat="server" ResouceKey="plDynamicContent" Text="This Module is configured to show dynamic Data. Please use Modulesettings to change." />
             </asp:Panel>
             <br/>
         </td>
