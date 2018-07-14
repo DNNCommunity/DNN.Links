@@ -748,7 +748,7 @@ namespace DotNetNuke.Modules.Links
                             if (this.ModuleContentType == Enums.ModuleContentTypes.Friends)
                                 isInARole = true;
 
-                            if (isInARole | link.GrantRoles.Contains(";-2;") | link.GrantRoles.Contains(";-1;") | this.UserInfo.IsSuperUser | this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
+                            if (!this.UsePermissions | isInARole | link.GrantRoles.Contains(";-2;") | link.GrantRoles.Contains(";-1;") | this.UserInfo.IsSuperUser | this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
 
                                 linksToShow.Add(link);
                         }
