@@ -64,16 +64,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UserControl plURL;
-        
-        /// <summary>
-        /// ctlURL control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl ctlURL;
+        protected global::System.Web.UI.UserControl plURL;       
         
         /// <summary>
         /// tblGetContent control.
@@ -217,24 +208,7 @@ namespace DotNetNuke.Modules.Links {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton cmdDelete;
-        
-        /// <summary>
-        /// ctlAudit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl ctlAudit;
-        
-        /// <summary>
-        /// ctlTracking control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl ctlTracking;
+        protected global::System.Web.UI.WebControls.LinkButton cmdDelete;                        
+                
     }
 }

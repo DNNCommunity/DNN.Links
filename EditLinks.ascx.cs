@@ -57,6 +57,11 @@ namespace DotNetNuke.Modules.Links
     /// 	''' -----------------------------------------------------------------------------
     public partial class EditLinks : PortalModuleBase
     {
+        protected DotNetNuke.UI.UserControls.UrlControl ctlURL;
+        protected DotNetNuke.UI.UserControls.ModuleAuditControl ctlAudit;
+        protected DotNetNuke.UI.UserControls.URLTrackingControl ctlTracking;
+
+
         private int itemId = -1;
 
         protected override void OnInit(EventArgs e)
