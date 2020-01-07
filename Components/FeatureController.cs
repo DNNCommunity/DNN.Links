@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Search.Entities;
 
 namespace DotNetNuke.Modules.Links.Components
@@ -26,6 +27,7 @@ namespace DotNetNuke.Modules.Links.Components
             if (links.Count() != 0)
             {
                 var module = ModuleController.Instance.GetModule(moduleID, DotNetNuke.Common.Utilities.Null.NullInteger, false);
+                var portalId = module?.PortalID ?? Null.NullInteger;
                 xml.Append("<links>");                
                 foreach (var link in links)
                 {
@@ -36,6 +38,9 @@ namespace DotNetNuke.Modules.Links.Components
                     xml.AppendFormat("<description>{0}</description>", XmlUtils.XMLEncode(link.Description));
                     xml.AppendFormat("<newwindow>{0}</newwindow>", XmlUtils.XMLEncode(link.NewWindow.ToString()));
                     xml.AppendFormat("<trackclicks>{0}</trackclicks>", XmlUtils.XMLEncode(link.TrackClicks.ToString()));
+                    xml.AppendFormat("<logactivity>{0}</logactivity>", XmlUtils.XMLEncode(link.LogActivity.ToString()));
+                    xml.AppendFormat("<refreshinterval>{0}</refreshinterval>", XmlUtils.XMLEncode(link.RefreshInterval.ToString()));
+                    xml.AppendFormat("<grantroles>{0}</grantroles>", XmlUtils.XMLEncode(ConvertToRoleNames(portalId, link.GrantRoles)));
                     xml.Append("</link>");
                 }
 
@@ -54,31 +59,40 @@ namespace DotNetNuke.Modules.Links.Components
         /// <param name="userId">The user ID of the user importing the data</param>
         public void ImportModule(int moduleID, string content, string version, int userId)
         {
+            var module = ModuleController.Instance.GetModule(moduleID, DotNetNuke.Common.Utilities.Null.NullInteger, false);
+            var portalId = module?.PortalID ?? Null.NullInteger;
+
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(content);
-            var xmlLinks = xmlDoc.SelectNodes("links");
+            var xmlLinks = xmlDoc.SelectNodes("links/link");
             foreach (XmlNode xmlLink in xmlLinks)
             {
-                int viewOrder = int.TryParse(xmlLink.SelectSingleNode("vieworder").Value, out viewOrder) ? viewOrder : 0;
-                bool newWindow = bool.TryParse(xmlLink.SelectSingleNode("newwindow").Value, out newWindow) ? newWindow : false;
+                int viewOrder = int.TryParse(GetXmlNodeValue(xmlLink ,"vieworder"), out viewOrder) ? viewOrder : 0;
+                bool newWindow = bool.TryParse(GetXmlNodeValue(xmlLink, "newwindow"), out newWindow) ? newWindow : false;
                 Link link = new Link
                 {
                     ModuleId = moduleID,
-                    Title = xmlLink.SelectSingleNode("title").Value,
-                    Url = DotNetNuke.Common.Globals.ImportUrl(moduleID, xmlLink.SelectSingleNode("url").Value),
+                    Title = GetXmlNodeValue(xmlLink, "title"),
+                    Url = DotNetNuke.Common.Globals.ImportUrl(moduleID, GetXmlNodeValue(xmlLink, "url")),
                     ViewOrder = viewOrder,
-                    Description = xmlLink.SelectSingleNode("description").Value
+                    Description = GetXmlNodeValue(xmlLink, "description"),
+                    GrantRoles = ConvertToRoleIds(portalId, GetXmlNodeValue(xmlLink, "grantroles")),
                 };
 
                 link.NewWindow = newWindow;
-                
-                try
+
+                if (bool.TryParse(GetXmlNodeValue(xmlLink, "trackclicks"), out bool trackClicks))
                 {
-                    link.TrackClicks = bool.Parse(xmlLink.SelectSingleNode("trackclicks").Value);
+                    link.TrackClicks = trackClicks;
                 }
-                catch
+                if (bool.TryParse(GetXmlNodeValue(xmlLink, "logactivity"), out bool logActivity))
                 {
-                    link.TrackClicks = false;
+                    link.LogActivity = logActivity;
+                }
+
+                if (int.TryParse(GetXmlNodeValue(xmlLink, "refreshinterval"), out int refreshInterval))
+                {
+                    link.RefreshInterval = refreshInterval;
                 }
 
                 link.CreatedDate = DateTime.Now;
@@ -93,7 +107,7 @@ namespace DotNetNuke.Modules.Links.Components
                     moduleInfo.PortalID, 
                     link.Url,
                     LinkController.ConvertUrlType(DotNetNuke.Common.Globals.GetURLType(link.Url)), 
-                    false,
+                    link.LogActivity,
                     link.TrackClicks, 
                     moduleID, 
                     link.NewWindow);
@@ -121,6 +135,67 @@ namespace DotNetNuke.Modules.Links.Components
             }
 
             return searchDocuments;
+        }
+
+        private string GetXmlNodeValue(XmlNode parent, string nodeName)
+        {
+            var node = parent.SelectSingleNode(nodeName);
+            if (node == null)
+            {
+                return string.Empty;
+            }
+
+            return node.Value ?? node.InnerText;
+        }
+
+        private string ConvertToRoleNames(int portalId, string grantRoles)
+        {
+            if (Null.IsNull(portalId) || string.IsNullOrEmpty(grantRoles))
+            {
+                return string.Empty;
+            }
+
+            var roles = string.Empty;
+            foreach (var roleId in grantRoles.Split(new []{';'}, StringSplitOptions.RemoveEmptyEntries).Select(i => Convert.ToInt32(i)))
+            {
+                var role = RoleController.Instance.GetRoleById(portalId, roleId);
+                if (role != null)
+                {
+                    roles += $"{role.RoleName};";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(roles) && !roles.StartsWith(";"))
+            {
+                roles = $";{roles}";
+            }
+
+            return roles;
+        }
+
+        private string ConvertToRoleIds(int portalId, string roleNames)
+        {
+            if (Null.IsNull(portalId) || string.IsNullOrEmpty(roleNames))
+            {
+                return string.Empty;
+            }
+
+            var roles = string.Empty;
+            foreach (var roleName in roleNames.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var role = RoleController.Instance.GetRoleByName(portalId, roleName);
+                if (role != null)
+                {
+                    roles += $"{role.RoleID};";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(roles) && !roles.StartsWith(";"))
+            {
+                roles = $";{roles}";
+            }
+
+            return roles;
         }
     }
 }

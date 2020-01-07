@@ -272,7 +272,7 @@ namespace DotNetNuke.Modules.Links.Components
             {
                 if (oldLink.Title == link.Title && oldLink.Url == link.Url)
                 {
-                    DeleteLink(link.ItemId, moduleId);
+                    DeleteLink(oldLink.ItemId, moduleId);
                 }
             }
         }
