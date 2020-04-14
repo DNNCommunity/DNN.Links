@@ -227,15 +227,15 @@ namespace DotNetNuke.Modules.Links.Components
         {
             using (var ctx = DataContext.Instance())
             {
-                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "dnnLinks_GetLink", itemID, moduleId).FirstOrDefault();
+                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, DataProvider.Instance().ObjectQualifier + "dnnLinks_GetLink", itemID, moduleId).FirstOrDefault();
             }                
         }
 
         public static IEnumerable<Link> GetLinks(int moduleId)
-        {
+        {            
             using (var ctx = DataContext.Instance())
             {
-                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "dnnLinks_GetLinks", moduleId);
+                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, DataProvider.Instance().ObjectQualifier + "dnnLinks_GetLinks", moduleId);
             }
         }
 
