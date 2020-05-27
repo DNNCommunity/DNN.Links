@@ -227,7 +227,7 @@ namespace DotNetNuke.Modules.Links.Components
         {
             using (var ctx = DataContext.Instance())
             {
-                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "dnnLinks_GetLink", itemID, moduleId).FirstOrDefault();
+                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "{databaseOwner}{objectQualifier}dnnLinks_GetLink", itemID, moduleId).FirstOrDefault();
             }                
         }
 
@@ -235,7 +235,7 @@ namespace DotNetNuke.Modules.Links.Components
         {
             using (var ctx = DataContext.Instance())
             {
-                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "dnnLinks_GetLinks", moduleId);
+                return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "{databaseOwner}{objectQualifier}dnnLinks_GetLinks", moduleId);
             }
         }
 
