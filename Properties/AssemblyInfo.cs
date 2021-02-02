@@ -8,6 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Reflection.AssemblyDescription("Provides an easy way to place a list of links on a website")]
+[assembly: System.Reflection.AssemblyCompany("DotNetNuke")]
+[assembly: System.Reflection.AssemblyProduct("Links")]
+[assembly: System.Reflection.AssemblyCopyright("Copyright © 2021")]
 [assembly: System.Reflection.AssemblyVersion("7.1.0.00")]
+[assembly: System.Reflection.AssemblyTitle("DotNetNuke Links Module")]
 
 

@@ -68,8 +68,15 @@
              XmlFileName="$(MSBuildProjectDirectory)\DNN_Links.dnn">
       <Output TaskParameter="Value" PropertyName="ModuleVersion" />
     </XmlRead>
-    <Attrib Files="%(AssemblyVersionFiles.FullPath)" Normal="true"/>
-    <AssemblyInfo AssemblyVersion="$(ModuleVersion).00" CodeLanguage="CS" OutputFile="$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs" />
+    <AssemblyInfo
+      AssemblyVersion="$(ModuleVersion).00"
+      CodeLanguage="CS"
+      AssemblyTitle="DotNetNuke Links Module"
+      AssemblyDescription="Provides an easy way to place a list of links on a website"
+      AssemblyCompany="DotNetNuke"
+      AssemblyProduct="Links"
+      AssemblyCopyright="Copyright © 2021"
+      OutputFile="$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs" />
     <Message Text="MSBUILD: Assembly Version set to: $(ModuleVersion)" Importance="high"></Message>
 
     <!-- Remove the temporary folders in case previous build failed in the middle of an operation-->
