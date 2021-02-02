@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DNN_Links" type="Module" version="7.0.2">
+    <package name="DNN_Links" type="Module" version="7.1.0">
       <friendlyName>Links</friendlyName>
       <description>This module renders a list of hyperlinks. Links includes an edit page, which allows authorized users to edit the Links data stored in the SQL database.</description>
       <iconFile>img/links-icon.png</iconFile>
@@ -14,7 +14,7 @@
       <releaseNotes src="ReleaseNotes.htm" />
       <azureCompatible>true</azureCompatible>
       <dependencies>
-        <dependency type="coreVersion">08.00.00</dependency>
+        <dependency type="coreVersion">09.04.00</dependency>
       </dependencies>
       <components>
         <component type="Config">
@@ -76,13 +76,13 @@
             </script>
             <script type="Install">
               <path>Providers\DataProviders\SqlDataProvider</path>
-              <name>07.00.02.SqlDataProvider</name>
-              <version>07.00.02</version>
+              <name>07.01.00.SqlDataProvider</name>
+              <version>07.01.00</version>
             </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider\</path>
               <name>Uninstall.SqlDataProvider</name>
-              <version>7.0.0</version>
+              <version>7.1.0</version>
             </script>
           </scripts>
         </component>

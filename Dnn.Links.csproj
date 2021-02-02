@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotNetNuke.Modules.Links</RootNamespace>
     <AssemblyName>DotNetNuke.Modules.Links</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
     <Use64BitIISExpress />
     <IISExpressSSLPort />
@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,48 +46,46 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetNuke, Version=8.0.0.809, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Core.8.0.0.809\lib\net40\DotNetNuke.dll</HintPath>
+    <Reference Include="DotNetNuke, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DotNetNuke.Core.9.4.0\lib\net45\DotNetNuke.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Web, Version=8.0.0.809, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Web.8.0.0.809\lib\net40\DotNetNuke.Web.dll</HintPath>
+    <Reference Include="DotNetNuke.Web, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DotNetNuke.Web.9.4.0\lib\net45\DotNetNuke.Web.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Web.Deprecated, Version=8.0.0.809, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Web.Deprecated.8.0.0.809\lib\net40\DotNetNuke.Web.Deprecated.dll</HintPath>
+    <Reference Include="DotNetNuke.Web.Deprecated, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DotNetNuke.Web.Deprecated.9.4.0\lib\net45\DotNetNuke.Web.Deprecated.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Web.Deprecated.8.0.0.809\lib\net40\DotNetNuke.WebUtility.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\DotNetNuke.Web.9.4.0\lib\net45\DotNetNuke.WebUtility.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Core.8.0.0.809\lib\net40\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+      <HintPath>packages\DotNetNuke.Core.9.4.0\lib\net45\Microsoft.ApplicationBlocks.Data.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.UI, Version=2013.2.717.40, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Web.Deprecated.8.0.0.809\lib\net40\Telerik.Web.UI.dll</HintPath>
+      <HintPath>packages\DotNetNuke.Web.Deprecated.9.4.0\lib\net45\Telerik.Web.UI.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
@@ -149,7 +148,7 @@
     <Content Include="README.md" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
     <None Include="packages.config" />
-    <Content Include="Providers\DataProviders\SqlDataProvider\07.00.02.SqlDataProvider" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\07.01.00.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\EditLinks.ascx.resx" />

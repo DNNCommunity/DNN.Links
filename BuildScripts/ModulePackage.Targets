@@ -13,10 +13,6 @@
     <BinDir>$(DotNetNukeDir)\bin</BinDir>
   </PropertyGroup>
   
-  
-  
-  
-  
   <Target Name="PackageModule">
     <CallTarget Targets="DeployModule" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
     <CallTarget Targets="CreateInstallPackages" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
@@ -64,7 +60,7 @@
     <Delete Files="$(MSBuildProjectDirectory)\DebugDeploy.zip" />
   </Target>
 
-  <Target Name="CreateInstallPackages">
+  <Target Name="CreateInstallPackages" Outputs="UpdatedAssemblyVersionFiles">
     
     <!-- Set the module version -->
     <XmlRead Prefix="n" Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
@@ -72,7 +68,15 @@
              XmlFileName="$(MSBuildProjectDirectory)\DNN_Links.dnn">
       <Output TaskParameter="Value" PropertyName="ModuleVersion" />
     </XmlRead>
-    <AssemblyInfo AssemblyVersion="$(ModuleVersion).00" CodeLanguage="CS"></AssemblyInfo>
+    <AssemblyInfo
+      AssemblyVersion="$(ModuleVersion).00"
+      CodeLanguage="CS"
+      AssemblyTitle="DotNetNuke Links Module"
+      AssemblyDescription="Provides an easy way to place a list of links on a website"
+      AssemblyCompany="DotNetNuke"
+      AssemblyProduct="Links"
+      AssemblyCopyright="Copyright © 2021"
+      OutputFile="$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs" />
     <Message Text="MSBUILD: Assembly Version set to: $(ModuleVersion)" Importance="high"></Message>
 
     <!-- Remove the temporary folders in case previous build failed in the middle of an operation-->
