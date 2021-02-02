@@ -114,7 +114,7 @@ namespace DotNetNuke.Modules.Links
                     cblGrantRoles.DataTextField = "RoleName";
                     cblGrantRoles.DataValueField = "RoleID";
                     cblGrantRoles.DataBind();
-                    
+
                     ClientAPI.AddButtonConfirm(cmdDelete, Services.Localization.Localization.GetString("DeleteItem"));
 
                     if (itemId != -1)
