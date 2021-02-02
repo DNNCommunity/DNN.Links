@@ -8,6 +8,7 @@ DNN Links is a basic module used for displaying navigational links on your DNN s
 |                  06.02.03 |               07.02.00 |               09.01.01 |
 |                  07.00.00 |               07.02.00 |               09.02.00 |
 |                  07.00.01 |               08.00.00 |               09.08.01 |
+|                  07.01.00 |               09.04.00 |               09.08.01 |
 
 ## Building the module from source and submitting pull requests
 1. Install Dnn (latest stable version) from https://github.com/dnnsoftware/Dnn.Platform/releases
