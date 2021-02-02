@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DNN_Links" type="Module" version="7.0.1">
+    <package name="DNN_Links" type="Module" version="7.0.2">
       <friendlyName>Links</friendlyName>
       <description>This module renders a list of hyperlinks. Links includes an edit page, which allows authorized users to edit the Links data stored in the SQL database.</description>
       <iconFile>img/links-icon.png</iconFile>
@@ -73,6 +73,11 @@
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>04.01.01.SqlDataProvider</name>
               <version>04.01.01</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>07.00.02.SqlDataProvider</name>
+              <version>07.00.02</version>
             </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider\</path>
