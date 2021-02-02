@@ -47,6 +47,9 @@ namespace DotNetNuke.Modules.Links.Components
         public bool TrackClicks { get; set; }
 
         [ReadOnlyColumn]
+        public bool LogActivity { get; set; }
+
+        [ReadOnlyColumn]
         public bool NewWindow { get; set; }        
 
         [IgnoreColumn]
