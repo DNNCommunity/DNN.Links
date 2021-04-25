@@ -23,3 +23,4 @@ AS
 DELETE
 FROM {databaseOwner}{objectQualifier}Links
 WHERE  ItemID = @ItemId AND ModuleID = @ModuleId
+GO

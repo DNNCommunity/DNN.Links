@@ -1,6 +1,6 @@
 <%--[alex - 09/01/2009] changed CodeBehind to CodeFile (required for WPA projects)--%>
-<%@ Control Language="vb" CodeFile="EditLinks.ascx.vb" AutoEventWireup="false" Explicit="True"
-    Inherits="DotNetNuke.Modules.Links.EditLinks" %>
+<%@ Control Language="C#" AutoEventWireup="false" Explicit="True"
+    Inherits="DotNetNuke.Modules.Links.EditLinks" Codebehind="EditLinks.ascx.cs" %>
 <%@ Register Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls" TagPrefix="DNNWC" %>
 <%@ Register TagPrefix="Portal" TagName="Tracking" Src="~/controls/URLTrackingControl.ascx" %>
 <%@ Register TagPrefix="Portal" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
@@ -11,7 +11,7 @@
     <tr>
         <td colspan="2">
             <asp:Panel ID="pnlDynamicContent" runat="server">
-                <asp:Label ID="plDynamicContent" runat="server" Text="This Module is configured to show dynamic Data. Please use Modulesettings to change." />
+                <asp:Label ID="plDynamicContent" runat="server" ResouceKey="plDynamicContent" Text="This Module is configured to show dynamic Data. Please use Modulesettings to change." />
             </asp:Panel>
             <br/>
         </td>
@@ -47,7 +47,7 @@
         </td>
         <td width="365">
             <asp:LinkButton ID="lbtGetContent" runat="server" CssClass="SubHead" Visible="true"
-                ResourceKey="lbtGetContent" />
+                ResourceKey="lbtGetContent" OnClick="lbtGetContent_Click" />
         </td>
     </tr>
     <tr>
@@ -128,13 +128,20 @@
     </tr>
 </table>
 <p>
-    <DNNWC:CommandButton ID="cmdUpdate" runat="server" ImageUrl="~/images/save.gif" ResourceKey="cmdUpdate" />
+    <asp:LinkButton ID="cmdUpdate" runat="server" OnClick="cmdUpdate_Click" >
+        <asp:Image runat="server" ImageUrl="~/images/save.gif" />
+        <asp:Label runat="server" ResourceKey="cmdUpdate" />
+    </asp:LinkButton>    
+    &nbsp;    
+    <asp:LinkButton ID="cmdCancel" runat="server" OnClick="cmdCancel_Click" CausesValidation="false">
+        <asp:Image runat="server" ImageUrl="~/images/action_export.gif" />
+        <asp:Label runat="server" ResourceKey="cmdCancel" />
+    </asp:LinkButton>
     &nbsp;
-    <DNNWC:CommandButton ID="cmdCancel" ResourceKey="cmdCancel" runat="server" CausesValidation="False"
-        ImageUrl="~/images/action_export.gif" />
-    &nbsp;
-    <DNNWC:CommandButton ID="cmdDelete" ResourceKey="cmdDelete" runat="server" CssClass="CommandButton"
-        CausesValidation="False" ImageUrl="~/images/delete.gif" />
+    <asp:LinkButton ID="cmdDelete" runat="server" OnClick="cmdDelete_Click" CausesValidation="false">
+        <asp:Image runat="server" ImageUrl="~/images/delete.gif" />
+        <asp:Label runat="server" ResourceKey="cmdDelete" />
+    </asp:LinkButton>
 </p>
 <Portal:Audit ID="ctlAudit" runat="server" />
 <br>

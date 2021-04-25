@@ -1,0 +1,16 @@
+﻿bin\DotNetNuke.Modules.Links.pdb
+App_Code\Links\Providers\DataProviders\SqlDataProvider\SqlDataProvider.vb
+App_Code\Links\Providers\DataProviders\SqlDataProvider
+App_Code\Links\Providers\DataProviders
+App_Code\Links\Providers
+App_Code\Links\Consts.vb
+App_Code\Links\DataProvider.vb
+App_Code\Links\Enums.vb
+App_Code\Links\LinksController.vb
+App_Code\Links\LinksFriend.vb
+App_Code\Links\LinksInfo.vb
+App_Code\Links\Utils.vb
+App_Code\Links
+DesktopModules\Links\EditLinks.ascx.vb
+DesktopModules\Links\Links.ascx.vb
+DesktopModules\Links\Settings.ascx.vb
