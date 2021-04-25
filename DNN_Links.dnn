@@ -1,14 +1,14 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DNN_Links" type="Module" version="7.1.0">
+    <package name="DNN_Links" type="Module" version="8.0.0">
       <friendlyName>Links</friendlyName>
       <description>This module renders a list of hyperlinks. Links includes an edit page, which allows authorized users to edit the Links data stored in the SQL database.</description>
       <iconFile>img/links-icon.png</iconFile>
       <owner>
-        <name>DotNetNuke Corporation</name>
-        <organization>DotNetNuke Corporation</organization>
-        <url>http://www.dotnetnuke.com</url>
-        <email>support@dotnetnuke.com</email>
+        <name>DNN Community</name>
+        <organization>DNN Community</organization>
+        <url>http://www.dnncommunity.org</url>
+        <email>info@dnncommunity.org</email>
       </owner>
       <license src="License.htm" />
       <releaseNotes src="ReleaseNotes.htm" />

@@ -13,10 +13,9 @@
                 <asp:ListItem resourcekey="Link" Value="1">Link</asp:ListItem>
                 <asp:ListItem resourcekey="Menu" Value="2">Menu</asp:ListItem>
                 <asp:ListItem resourcekey="Folder" Value="3">Folder</asp:ListItem>
-                <asp:ListItem resourcekey="Friends" Value="4">Friends</asp:ListItem>
             </asp:DropDownList>
             <asp:DropDownList ID="optTypeContentSelection" runat="server" CssClass="Normal" Width="200"
-                Visible="false" AutoPostBack="true" OnSelectedIndexChanged="optTypeContentSelection_SelectedIndexChanged">
+                Visible="false">
             </asp:DropDownList>
         </td>
     </tr>
