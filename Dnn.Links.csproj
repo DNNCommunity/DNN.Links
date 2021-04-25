@@ -94,7 +94,6 @@
     <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Components\Link.cs" />
     <Compile Include="Components\LinkController.cs" />
-    <Compile Include="Components\LinksFriend.cs" />
     <Compile Include="Components\TargetInfo.cs" />
     <Compile Include="Consts\Consts.cs" />
     <Compile Include="Consts\SettingName.cs" />

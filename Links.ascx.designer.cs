@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DotNetNuke.Modules.Links {
-    
-    
-    public partial class Links {
-        
+namespace DotNetNuke.Modules.Links
+{
+
+
+    public partial class Links
+    {
+
         /// <summary>
         /// pnlList control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlList;
-        
+
         /// <summary>
         /// lstLinks control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater lstLinks;
-        
+
         /// <summary>
         /// pnlDropdown control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlDropdown;
-        
+
         /// <summary>
         /// cmdEdit control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton cmdEdit;
-        
+
         /// <summary>
         /// cboLinks control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList cboLinks;
-        
+
         /// <summary>
         /// cmdGo control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton cmdGo;
-        
+
         /// <summary>
         /// cmdInfo control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton cmdInfo;
-        
+
         /// <summary>
         /// lblDescription control.
         /// </summary>
@@ -83,23 +85,5 @@ namespace DotNetNuke.Modules.Links {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDescription;
-        
-        /// <summary>
-        /// pnlFriends control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlFriends;
-        
-        /// <summary>
-        /// lvFriends control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Telerik.Web.UI.RadListView lvFriends;
     }
 }
