@@ -37,7 +37,6 @@ using DotNetNuke.Services.FileSystem;
 using System.Xml;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
-using Telerik.Web.UI;
 using DotNetNuke.Common.Utilities;
 using Dnn.Links;
 using DotNetNuke.Security.Permissions;
@@ -147,11 +146,6 @@ namespace DotNetNuke.Modules.Links
                         }
 
                     case Enums.ModuleContentTypes.Folder:
-                        {
-                            return false;
-                        }
-
-                    case Enums.ModuleContentTypes.Friends:
                         {
                             return false;
                         }
@@ -485,13 +479,8 @@ namespace DotNetNuke.Modules.Links
                         this.Page.ClientScript.RegisterClientScriptInclude(Consts.PopupJS, jspath);
                     }
                 }
-
-                if (this.ModuleContentType.Equals(Enums.ModuleContentTypes.Friends) && this.Settings[Consts.ModuleContentItem].Equals("BusinessCardMode"))
-                {
-                    pnlList.Visible = false;
-                    pnlDropdown.Visible = false;
-                }
-                else if (System.Convert.ToString(Settings[SettingName.DisplayMode]) == Consts.DisplayModeDropdown)
+                
+                if (Convert.ToString(Settings[SettingName.DisplayMode]) == Consts.DisplayModeDropdown)
                 {
                     pnlList.Visible = false;
                     pnlDropdown.Visible = true;
@@ -642,74 +631,6 @@ namespace DotNetNuke.Modules.Links
 
                                 break;
                             }
-
-                        case Enums.ModuleContentTypes.Friends:
-                            {
-                                if (this.Settings[Consts.ModuleContentItem].Equals("NormalMode"))
-                                    pnlFriends.Visible = false;
-                                else
-                                {
-                                    pnlFriends.Visible = true;
-                                    pnlDropdown.Visible = false;
-                                    pnlList.Visible = false;
-                                }
-
-                                // list friends
-                                UserInfo currentUser = UserInfo;
-                                if (currentUser != null & currentUser.UserID != -1)
-                                {
-                                    foreach (LinksFriend lFriend in GetFriendsSource(currentUser))
-                                    {
-                                        Link link = new Link();
-                                        link.NewWindow = false;
-                                        switch ((Enums.DisplayAttribute)(int)this.Settings[SettingName.DisplayAttribute])
-                                        {
-                                            case Enums.DisplayAttribute.Username:
-                                                {
-                                                    link.Title = lFriend.UserName;
-                                                    break;
-                                                }
-
-                                            case Enums.DisplayAttribute.DisplayName:
-                                                {
-                                                    link.Title = lFriend.DisplayName;
-                                                    break;
-                                                }
-
-                                            case Enums.DisplayAttribute.FirstName:
-                                                {
-                                                    link.Title = lFriend.UserFirstName;
-                                                    break;
-                                                }
-
-                                            case Enums.DisplayAttribute.LastName:
-                                                {
-                                                    link.Title = lFriend.UserLastName;
-                                                    break;
-                                                }
-
-                                            case Enums.DisplayAttribute.FullName:
-                                                {
-                                                    link.Title = lFriend.UserFullName;
-                                                    break;
-                                                }
-                                        }
-                                        // link.Title = lFriend.UserName
-                                        link.Url = DotNetNuke.Common.Globals.LinkClick("UserID=" + lFriend.UserID, this.TabId, this.ModuleId);
-                                        link.GrantRoles = ";";
-                                        link.ItemId = lFriend.UserID;
-                                        link.Description = "Status: " + lFriend.Status + "<br />Username: " + lFriend.UserName + "<br />Displayname: " + lFriend.DisplayName + "<br />Full Name: " + lFriend.UserFullName;
-                                        links.Add(link);
-                                    }
-                                    lvFriends.DataSource = GetFriendsSource(currentUser);
-                                    lvFriends.DataBind();
-                                }
-                                if ((Enums.DisplayOrder)int.Parse(Settings[SettingName.DisplayOrder].ToString()) == Enums.DisplayOrder.ASC)
-                                    links = links.OrderBy(l => l.Title).ToList();
-                                else
-                                    links = links.OrderByDescending(l => l.Title).ToList();
-                                break;
-                            }
                     }
 
                     if (this.DisplayMode == Consts.DisplayModeDropdown)
@@ -744,10 +665,6 @@ namespace DotNetNuke.Modules.Links
                                     isInARole = true;
                             }
 
-                            // 
-                            if (this.ModuleContentType == Enums.ModuleContentTypes.Friends)
-                                isInARole = true;
-
                             if (!this.UsePermissions | isInARole | link.GrantRoles.Contains(";-2;") | link.GrantRoles.Contains(";-1;") | this.UserInfo.IsSuperUser | this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
 
                                 linksToShow.Add(link);
@@ -767,12 +684,6 @@ namespace DotNetNuke.Modules.Links
                                 {
                                     cboLinks.DataValueField = "ItemId";
                                     cboLinks.DataTextField = "Title";
-                                    break;
-                                }
-
-                            case Enums.ModuleContentTypes.Friends:
-                                {
-                                    cboLinks.DataValueField = "ItemId";
                                     break;
                                 }
                         }
@@ -799,9 +710,6 @@ namespace DotNetNuke.Modules.Links
                                 if (link.GrantRoles.Contains(";" + role.RoleID + ";"))
                                     isInARole = true;
                             }
-                            // 
-                            if (this.ModuleContentType == Enums.ModuleContentTypes.Friends)
-                                isInARole = true;
 
                             if (isInARole | link.GrantRoles.Contains("-2") | link.GrantRoles.Contains("-1") | this.UserInfo.IsSuperUser | this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
 
@@ -889,13 +797,6 @@ namespace DotNetNuke.Modules.Links
                                 strURL = DotNetNuke.Common.Globals.NavigateURL(this.TabId, string.Empty, "FileId", cboLinks.SelectedValue);
                                 break;
                             }
-
-                        case Enums.ModuleContentTypes.Friends:
-                            {
-                                objLink = new Link();
-                                strURL = DotNetNuke.Common.Globals.LinkClick("UserID=" + int.Parse(cboLinks.SelectedItem.Value), this.TabId, this.ModuleId);
-                                break;
-                            }
                     }
 
                     if (objLink != null)
@@ -962,22 +863,6 @@ namespace DotNetNuke.Modules.Links
                                     desc = Utils.GetFileSizeString(fileInfo.Size);
                                 break;
                             }
-
-                        case Enums.ModuleContentTypes.Friends:
-                            {
-                                UserInfo currentUser = UserInfo;
-                                UserInfo friendUser = UserController.GetUserById(this.PortalId, int.Parse(cboLinks.SelectedItem.Value));
-                                UserRelationship updatedRelation = RelationshipController.Instance.GetFriendRelationship(currentUser, friendUser);
-                                if (updatedRelation.Status.ToString().Equals("Accepted"))
-                                    desc = "Status: " + updatedRelation.Status.ToString();
-                                else if (currentUser.UserID != updatedRelation.UserId)
-                                    // current user not initialize
-                                    desc = "Status: " + "Receive Request from " + friendUser.Username;
-                                else
-                                    desc = "Status: " + "Request " + updatedRelation.Status.ToString();
-                                desc += "<br />Username: " + friendUser.Username + "<br />Displayname: " + friendUser.DisplayName + "<br />Full Name: " + friendUser.DisplayName;
-                                break;
-                            }
                     }
 
                     if (!string.IsNullOrEmpty(desc))
@@ -1035,7 +920,6 @@ namespace DotNetNuke.Modules.Links
                     Panel pnlDescription = (Panel)e.Item.FindControl("pnlDescription");
                     var lbldescrdiv = e.Item.FindControl("lbldescrdiv") as Label;
                     var spnSelect = e.Item.FindControl("spnSelect");
-                    var radToolTip = e.Item.FindControl("radToolTip") as RadToolTip;
                     var editLink = e.Item.FindControl("editLink") as HyperLink;
 
                     lblMoreInfo.Attributes.Add("onclick", "toggleVisibility('" + pnlDescription.ClientID + "')");
@@ -1044,12 +928,14 @@ namespace DotNetNuke.Modules.Links
 
                     linkHyp.HRef = FormatURL(link.Url, link.TrackClicks);
                     linkHyp.Target = link.NewWindow ? "_blank" : "_self";
+                    if (ShowPopup && link.Description != "")
+                    {
+                        linkHyp.Title = link.Description;
+                    }
 
                     lbldescrdiv.Text = HtmlDecode(link.Description);
 
                     spnSelect.Visible = DisplayInfo(link.Description);
-
-                    radToolTip.Visible = (ShowPopup && link.Description != "");
 
                     editLink.NavigateUrl = EditUrl("ItemId", link.ItemId.ToString());
                 }
@@ -1060,162 +946,6 @@ namespace DotNetNuke.Modules.Links
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' Page_Unload runs when the page is unloaded. It is used to solve caching problems with the core that cause certain items to not work.
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         ''' 	[awhittington]	01/04/2007	Added Page_Unload
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
-        private void Page_Unload(object sender, System.EventArgs e)
-        {
-            // Should no longer bee needed, but kept as a comment just in case:
-
-            //if (DisplayMode == Consts.DisplayModeDropdown | DisplayMode == "Y")
-
-            //    DataCache.RemoveCache(ModuleController.CacheKey(TabModuleId));
-
-            //if (!IsPostBack)
-            //    DataCache.RemoveCache(ModuleController.CacheKey(TabModuleId));
-        }
-
-
-        protected void btnRemoveFriend_OnCommand(object sender, CommandEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.CommandName))
-            {
-                UserInfo selectUser = UserController.GetUserById(this.PortalId, Convert.ToInt16(e.CommandName));
-                // remove friend
-                UserInfo currentUser = UserInfo;
-                try
-                {
-                    // beta api
-                    // RelationshipController.Instance.DeleteFriend(currentUser, selectUser)
-                    FriendsController.Instance.DeleteFriend(currentUser, selectUser);
-                    // update friends list
-                    lvFriends.DataSource = GetFriendsSource(currentUser);
-                    lvFriends.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    Exceptions.ProcessModuleLoadException(this, ex);
-                }
-            }
-        }
-
-        protected void btnAcceptFriendRequest_OnCommand(object sender, CommandEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.CommandName))
-            {
-                try
-                {
-                    UserInfo currentUser = UserInfo;
-                    // accept friend request
-                    RelationshipController.Instance.AcceptUserRelationship(Convert.ToInt32(e.CommandName));
-                    // update friends list
-                    lvFriends.DataSource = GetFriendsSource(currentUser);
-                    lvFriends.DataBind();
-                    // refresh
-                    Page.Response.Redirect(Page.Request.Url.ToString(), true);
-                }
-                catch (Exception ex)
-                {
-                    Exceptions.ProcessModuleLoadException(this, ex);
-                }
-            }
-        }
-
-        protected void cmbPageSize_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
-        {
-            lvFriends.PageSize = int.Parse(e.Value);
-            lvFriends.CurrentPageIndex = 0;
-            lvFriends.Rebind();
-        }
-
-        public string RedirectUserProfile(int userId)
-        {
-            string profileUrl = DotNetNuke.Common.Globals.LinkClick("UserID=" + userId, this.TabId, this.ModuleId);
-            return "window.location='" + profileUrl + "'";
-        }
-
-        public bool MakeVisible(string status)
-        {
-            if (status.ToString().Equals("Accepted"))
-                return true;
-            else
-                return false;
-        }
-
-        public bool MakeAcceptFriendRequestVisible(string status, int userId)
-        {
-            if (status.ToString().Equals("Accepted"))
-                return false;
-            else
-            {
-                UserInfo currentUser = UserInfo;
-                UserInfo relationUser = UserController.GetUserById(this.PortalId, userId);
-                UserRelationship relationship = RelationshipController.Instance.GetFriendRelationship(currentUser, relationUser);
-                if (currentUser.UserID != relationship.UserId)
-                    // current user not initialize
-                    return true;
-                else
-                    return false;
-            }
-        }
-
-
-        public ArrayList GetFriendsSource(UserInfo currentUser)
-        {
-            ArrayList friendSourceList = new ArrayList();
-            // get friends
-            // beta api
-            // Dim relationshipList As List(Of UserRelationship) = RelationshipController.Instance.GetFriends(currentUser)
-            var relationshipList = RelationshipController.Instance.GetUserRelationships(currentUser);
-            if (relationshipList != null)
-            {
-                foreach (UserRelationship relation in relationshipList)
-                {
-                    UserInfo friendInfo;
-                    // check who makes request 
-                    if (currentUser.UserID == relation.UserId)
-                        friendInfo = UserController.GetUserById(this.PortalId, relation.RelatedUserId);
-                    else
-                        friendInfo = UserController.GetUserById(this.PortalId, relation.UserId);
-                    // get updated relationship
-                    UserRelationship updatedRelation = RelationshipController.Instance.GetFriendRelationship(currentUser, friendInfo);
-                    if (updatedRelation != null)
-                    {
-                        LinksFriend friendSource = new LinksFriend();
-                        {
-                            var withBlock = friendSource;
-                            withBlock.UserID = friendInfo.UserID;
-                            withBlock.PhotoUrl = friendInfo.Profile.PhotoURL;
-                            withBlock.UserName = friendInfo.Username;
-                            withBlock.DisplayName = friendInfo.DisplayName;
-                            withBlock.UserFirstName = friendInfo.FirstName;
-                            withBlock.UserLastName = friendInfo.LastName;
-                            withBlock.UserFullName = friendInfo.DisplayName;
-                            withBlock.UserRelationshipID = relation.UserRelationshipId;
-                        }
-                        if (updatedRelation.Status.ToString().Equals("Accepted"))
-                            friendSource.Status = updatedRelation.Status.ToString();
-                        else if (currentUser.UserID != relation.UserId)
-                            // current user not initialize
-                            friendSource.Status = "Receive Request from " + friendInfo.Username;
-                        else
-                            friendSource.Status = "Request " + updatedRelation.Status.ToString();
-                        friendSourceList.Add(friendSource);
-                    }
-                }
-            }
-            return friendSourceList;
-        }
-
-
 
         public Entities.Modules.Actions.ModuleActionCollection ModuleActions
         {

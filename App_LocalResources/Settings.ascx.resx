@@ -183,8 +183,11 @@
   <data name="plUsePermissions.Text" xml:space="preserve">
     <value>Use Permissions</value>
   </data>
-  <data name="plUsePopup.Text" xml:space="preserve">
-    <value>Telerik Popup</value>
+  <data name="plUseEllipsis.Text" xml:space="preserve">
+    <value>Ellipsis</value>
+  </data>
+  <data name="plUseTooltip.Text" xml:space="preserve">
+    <value>Tooltip</value>
   </data>
   <data name="plDisplayAttribute.Help" xml:space="preserve">
     <value>Profile attribute needs to be displayed in Ascending or Descending order</value>

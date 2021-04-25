@@ -149,7 +149,6 @@ namespace DotNetNuke.Modules.Links
 
         public void LoadContentData(string pContentType)
         {
-            // optTypeContentSelection.Visible = True
             plControl.Visible = true;
             optControl.Visible = true;
             ploptView.Visible = true;
@@ -172,176 +171,101 @@ namespace DotNetNuke.Modules.Links
             switch ((Enums.ModuleContentTypes)int.Parse(pContentType))
             {
                 case Enums.ModuleContentTypes.Links:
-                    {
-                        optUsePermissions.Visible = true;
-                        plUsePermissions.Visible = true;
-                        optTypeContentSelection.Visible = false;
-                        break;
-                    }
+                {
+                    optUsePermissions.Visible = true;
+                    plUsePermissions.Visible = true;
+                    optTypeContentSelection.Visible = false;
+                    break;
+                }
 
                 case Enums.ModuleContentTypes.Menu:
+                {
+                    optTypeContentSelection.Visible = true;
+
+                    TabController dnnTabController = new TabController();
+                    TabCollection portalTabs = dnnTabController.GetTabsByPortal(PortalId);
+                    TabCollection hostTabs = dnnTabController.GetTabsByPortal(-1);
+
+                    TabCollection tabs = new TabCollection();
+                    AddTabsToCollection(portalTabs, tabs);
+                    AddTabsToCollection(hostTabs, tabs);
+
+                    List<DotNetNuke.Entities.Tabs.TabInfo> listTabs = new List<DotNetNuke.Entities.Tabs.TabInfo>();
+                    foreach (System.Collections.Generic.KeyValuePair<int, DotNetNuke.Entities.Tabs.TabInfo> kvp in tabs)
+                        listTabs.Add(kvp.Value);
+
+                    optTypeContentSelection.DataSource = listTabs;
+                    optTypeContentSelection.DataValueField = "TabID";
+                    optTypeContentSelection.DataTextField = "TabPath";
+                    optTypeContentSelection.DataBind();
+
+                    if (System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]) != string.Empty)
                     {
-                        optTypeContentSelection.Visible = true;
+                        ListItem item = optTypeContentSelection.Items.FindByValue(System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]));
 
-                        TabController dnnTabController = new TabController();
-                        TabCollection portalTabs = dnnTabController.GetTabsByPortal(PortalId);
-                        TabCollection hostTabs = dnnTabController.GetTabsByPortal(-1);
-
-                        TabCollection tabs = new TabCollection();
-                        AddTabsToCollection(portalTabs, tabs);
-                        AddTabsToCollection(hostTabs, tabs);
-
-                        List<DotNetNuke.Entities.Tabs.TabInfo> listTabs = new List<DotNetNuke.Entities.Tabs.TabInfo>();
-                        foreach (System.Collections.Generic.KeyValuePair<int, DotNetNuke.Entities.Tabs.TabInfo> kvp in tabs)
-                            listTabs.Add(kvp.Value);
-
-                        optTypeContentSelection.DataSource = listTabs;
-                        optTypeContentSelection.DataValueField = "TabID";
-                        optTypeContentSelection.DataTextField = "TabPath";
-                        optTypeContentSelection.DataBind();
-
-                        if (System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]) != string.Empty)
-                        {
-                            ListItem item = optTypeContentSelection.Items.FindByValue(System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]));
-
-                            if (item != null)
-                                item.Selected = true;
-                        }
-
-                        optUsePermissions.Visible = false;
-                        plUsePermissions.Visible = false;
-                        // 2014 TODO: Menu
-                        plMenuAllUsers.Visible = true;
-                        optMenuAllUsers.Visible = true;
-                        break;
+                        if (item != null)
+                            item.Selected = true;
                     }
+
+                    optUsePermissions.Visible = false;
+                    plUsePermissions.Visible = false;
+                    // 2014 TODO: Menu
+                    plMenuAllUsers.Visible = true;
+                    optMenuAllUsers.Visible = true;
+                    break;
+                }
 
                 case Enums.ModuleContentTypes.Folder:
+                {
+
+
+                    var dic = FolderManager.Instance.GetFolders(PortalId);
+
+                    var folders = new List<FolderInfo>();
+
+                    FolderPermissionController folderPermissionsController = new FolderPermissionController();
+
+                    foreach (var item in dic)
                     {
+                        if (FolderPermissionController.HasFolderPermission(this.PortalId, item.FolderPath, "READ"))
+                            folders.Add(item as FolderInfo);
+                    }
 
+                    optTypeContentSelection.DataSource = folders;
+                    optTypeContentSelection.DataValueField = "FolderID";
+                    optTypeContentSelection.DataTextField = "FolderPath";
+                    optTypeContentSelection.DataBind();
 
-                        var dic = FolderManager.Instance.GetFolders(PortalId);
+                    foreach (ListItem item in optTypeContentSelection.Items)
+                    {
+                        if (string.IsNullOrEmpty(item.Text))
+                            item.Text = "Root";
+                    }
 
-                        var folders = new List<FolderInfo>();
+                    optTypeContentSelection.Visible = true;
+                    optUsePermissions.Visible = false;
+                    plUsePermissions.Visible = false;
 
-                        FolderPermissionController folderPermissionsController = new FolderPermissionController();
+                    if (!string.IsNullOrEmpty(ModuleSettings[Consts.ModuleContentItem].ToString()))
+                    {
+                        string moduleContentItem = ModuleSettings[Consts.ModuleContentItem].ToString();
 
-                        foreach (var item in dic)
-                        {
-                            if (FolderPermissionController.HasFolderPermission(this.PortalId, item.FolderPath, "READ"))
-                                folders.Add(item as FolderInfo);
-                        }
-
-                        optTypeContentSelection.DataSource = folders;
-                        optTypeContentSelection.DataValueField = "FolderID";
-                        optTypeContentSelection.DataTextField = "FolderPath";
-                        optTypeContentSelection.DataBind();
-
+                        bool hasItem = false;
                         foreach (ListItem item in optTypeContentSelection.Items)
                         {
-                            if (string.IsNullOrEmpty(item.Text))
-                                item.Text = "Root";
-                        }
-
-                        optTypeContentSelection.Visible = true;
-                        optUsePermissions.Visible = false;
-                        plUsePermissions.Visible = false;
-
-                        if (!string.IsNullOrEmpty(ModuleSettings[Consts.ModuleContentItem].ToString()))
-                        {
-                            string moduleContentItem = ModuleSettings[Consts.ModuleContentItem].ToString();
-
-                            bool hasItem = false;
-                            foreach (ListItem item in optTypeContentSelection.Items)
+                            if (item.Value == moduleContentItem)
                             {
-                                if (item.Value == moduleContentItem)
-                                {
-                                    hasItem = true;
-                                    break;
-                                }
-                            }
-
-                            if (hasItem)
-                                optTypeContentSelection.SelectedValue = ModuleSettings[Consts.ModuleContentItem].ToString();
-                        }
-
-                        break;
-                    }
-
-                case Enums.ModuleContentTypes.Friends:
-                    {
-                        optTypeContentSelection.Visible = true;
-                        plControl.Visible = true;
-                        optControl.Visible = true;
-                        ploptView.Visible = true;
-                        optView.Visible = true;
-                        plInfo.Visible = true;
-                        optInfo.Visible = true;
-                        plNoWrap.Visible = true;
-                        optNoWrap.Visible = true;
-                        plDisplayAttribute.Visible = true;
-                        optDisplayAttribute.Visible = true;
-                        optDisplayOrder.Visible = true;
-                        plUsePermissions.Visible = false;
-                        optUsePermissions.Visible = false;
-                        plIcon.Visible = false;
-                        ctlIcon.Visible = false;
-
-                        optTypeContentSelection.Items.Clear();
-                        optTypeContentSelection.ClearSelection();
-                        optDisplayAttribute.ClearSelection();
-                        optDisplayOrder.ClearSelection();
-                        // normal und business card
-                        ArrayList modeList = new ArrayList();
-                        object modeNormal = new { ModeID = "NormalMode", Mode = "Normal" };
-                        object modeBusinessCard = new { ModeID = "BusinessCardMode", Mode = "Business Card" };
-                        modeList.Add(modeNormal);
-                        modeList.Add(modeBusinessCard);
-                        optTypeContentSelection.DataSource = modeList;
-                        optTypeContentSelection.DataValueField = "ModeID";
-                        optTypeContentSelection.DataTextField = "Mode";
-                        optTypeContentSelection.DataBind();
-
-                        if (System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]) != string.Empty)
-                        {
-                            ListItem item = optTypeContentSelection.Items.FindByValue(System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]));
-                            if (item != null)
-                            {
-                                item.Selected = true;
-                                if (item.Value.Equals(BUSINESSCARDMODE))
-                                {
-                                    plControl.Visible = false;
-                                    optControl.Visible = false;
-                                    ploptView.Visible = false;
-                                    optView.Visible = false;
-                                    plInfo.Visible = false;
-                                    optInfo.Visible = false;
-                                    plNoWrap.Visible = false;
-                                    optNoWrap.Visible = false;
-                                    plDisplayAttribute.Visible = false;
-                                    optDisplayAttribute.Visible = false;
-                                    optDisplayOrder.Visible = false;
-                                }
+                                hasItem = true;
+                                break;
                             }
                         }
 
-                        if (System.Convert.ToString(ModuleSettings[SettingName.DisplayAttribute]) != string.Empty)
-                        {
-                            ListItem item = optDisplayAttribute.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.DisplayAttribute]));
-
-                            if (item != null)
-                                item.Selected = true;
-                        }
-                        if (System.Convert.ToString(ModuleSettings[SettingName.DisplayAttribute]) != string.Empty)
-                        {
-                            ListItem item = optDisplayOrder.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.DisplayOrder]));
-
-                            if (item != null)
-                                item.Selected = true;
-                        }
-
-                        break;
+                        if (hasItem)
+                            optTypeContentSelection.SelectedValue = ModuleSettings[Consts.ModuleContentItem].ToString();
                     }
+
+                    break;
+                }
             }
         }
 
@@ -409,37 +333,29 @@ namespace DotNetNuke.Modules.Links
                 objModules.UpdateModuleSetting(ModuleId, "nowrap", optNoWrap.SelectedItem.Value);
                 objModules.UpdateModuleSetting(ModuleId, SettingName.ModuleContentType, optLinkModuleType.SelectedValue);
                 objModules.UpdateModuleSetting(ModuleId, SettingName.UsePermissions, optUsePermissions.SelectedValue);
-                // objModules.UpdateModuleSetting(ModuleId, "usepopup", optUsePopup.SelectedValue)
                 objModules.UpdateModuleSetting(ModuleId, SettingName.DisplayAttribute, optDisplayAttribute.SelectedValue);
                 objModules.UpdateModuleSetting(ModuleId, SettingName.DisplayOrder, optDisplayOrder.SelectedValue);
-                // 2014 TODO
                 objModules.UpdateModuleSetting(ModuleId, SettingName.MenuAllUsers, optMenuAllUsers.SelectedValue);
 
                 switch ((Enums.ModuleContentTypes)int.Parse(optLinkModuleType.SelectedValue))
                 {
                     case Enums.ModuleContentTypes.Menu:
-                        {
-                            objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
-                            break;
-                        }
+                    {
+                        objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
+                        break;
+                    }
 
                     case Enums.ModuleContentTypes.Folder:
-                        {
-                            objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
-                            objModules.UpdateModuleSetting(ModuleId, Consts.FolderId, optTypeContentSelection.SelectedValue);
-                            break;
-                        }
-
-                    case Enums.ModuleContentTypes.Friends:
-                        {
-                            objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
-                            break;
-                        }
+                    {
+                        objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
+                        objModules.UpdateModuleSetting(ModuleId, Consts.FolderId, optTypeContentSelection.SelectedValue);
+                        break;
+                    }
 
                     default:
-                        {
-                            break;
-                        }
+                    {
+                        break;
+                    }
                 }
 
                 bool allowCaching = true;
@@ -492,41 +408,6 @@ namespace DotNetNuke.Modules.Links
                 optNoWrap.SelectedValue = "NW";
 
             trOptView.Visible = optControl.SelectedValue != Consts.DisplayModeDropdown;
-        }
-
-        public void optTypeContentSelection_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if ((Enums.ModuleContentTypes)int.Parse(optLinkModuleType.SelectedValue) == Enums.ModuleContentTypes.Friends)
-            {
-                if (optTypeContentSelection.Text.Equals(BUSINESSCARDMODE))
-                {
-                    plControl.Visible = false;
-                    optControl.Visible = false;
-                    ploptView.Visible = false;
-                    optView.Visible = false;
-                    plInfo.Visible = false;
-                    optInfo.Visible = false;
-                    plNoWrap.Visible = false;
-                    optNoWrap.Visible = false;
-                    plDisplayAttribute.Visible = false;
-                    optDisplayAttribute.Visible = false;
-                    optDisplayOrder.Visible = false;
-                }
-                else
-                {
-                    plControl.Visible = true;
-                    optControl.Visible = true;
-                    ploptView.Visible = true;
-                    optView.Visible = true;
-                    plInfo.Visible = true;
-                    optInfo.Visible = true;
-                    plNoWrap.Visible = true;
-                    optNoWrap.Visible = true;
-                    plDisplayAttribute.Visible = true;
-                    optDisplayAttribute.Visible = true;
-                    optDisplayOrder.Visible = true;
-                }
-            }
         }
 
         public bool ShowIconPanel

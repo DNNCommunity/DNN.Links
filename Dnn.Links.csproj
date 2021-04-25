@@ -56,11 +56,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Web.Deprecated, Version=9.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Web.Deprecated.9.4.0\lib\net45\DotNetNuke.Web.Deprecated.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\DotNetNuke.Web.9.4.0\lib\net45\DotNetNuke.WebUtility.dll</HintPath>
@@ -84,17 +79,11 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Telerik.Web.UI, Version=2013.2.717.40, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <HintPath>packages\DotNetNuke.Web.Deprecated.9.4.0\lib\net45\Telerik.Web.UI.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Components\Link.cs" />
     <Compile Include="Components\LinkController.cs" />
-    <Compile Include="Components\LinksFriend.cs" />
     <Compile Include="Components\TargetInfo.cs" />
     <Compile Include="Consts\Consts.cs" />
     <Compile Include="Consts\SettingName.cs" />

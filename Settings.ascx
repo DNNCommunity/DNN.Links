@@ -13,10 +13,9 @@
                 <asp:ListItem resourcekey="Link" Value="1">Link</asp:ListItem>
                 <asp:ListItem resourcekey="Menu" Value="2">Menu</asp:ListItem>
                 <asp:ListItem resourcekey="Folder" Value="3">Folder</asp:ListItem>
-                <asp:ListItem resourcekey="Friends" Value="4">Friends</asp:ListItem>
             </asp:DropDownList>
             <asp:DropDownList ID="optTypeContentSelection" runat="server" CssClass="Normal" Width="200"
-                Visible="false" AutoPostBack="true" OnSelectedIndexChanged="optTypeContentSelection_SelectedIndexChanged">
+                Visible="false">
             </asp:DropDownList>
         </td>
     </tr>
@@ -80,9 +79,9 @@
         </td>
         <td valign="bottom">
             <asp:RadioButtonList ID="optInfo" runat="server" CssClass="NormalTextBox" RepeatDirection="Horizontal">
-                <asp:ListItem resourcekey="No" Value="N">No</asp:ListItem>
-                <asp:ListItem resourcekey="Yes" Value="Y">Yes</asp:ListItem>
-                <asp:ListItem resourcekey="plUsePopup" Value="JQ">Telerik Popup</asp:ListItem>
+                <asp:ListItem resourcekey="None" Value="N">None</asp:ListItem>
+                <asp:ListItem resourcekey="plUseEllipsis" Value="Y">Ellipsis</asp:ListItem>
+                <asp:ListItem resourcekey="plUseTooltip" Value="JQ">Tooltip</asp:ListItem>
             </asp:RadioButtonList>
         </td>
     </tr>
