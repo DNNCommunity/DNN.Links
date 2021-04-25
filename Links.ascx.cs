@@ -37,7 +37,6 @@ using DotNetNuke.Services.FileSystem;
 using System.Xml;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
-using Telerik.Web.UI;
 using DotNetNuke.Common.Utilities;
 using Dnn.Links;
 using DotNetNuke.Security.Permissions;
@@ -921,7 +920,6 @@ namespace DotNetNuke.Modules.Links
                     Panel pnlDescription = (Panel)e.Item.FindControl("pnlDescription");
                     var lbldescrdiv = e.Item.FindControl("lbldescrdiv") as Label;
                     var spnSelect = e.Item.FindControl("spnSelect");
-                    var radToolTip = e.Item.FindControl("radToolTip") as RadToolTip;
                     var editLink = e.Item.FindControl("editLink") as HyperLink;
 
                     lblMoreInfo.Attributes.Add("onclick", "toggleVisibility('" + pnlDescription.ClientID + "')");
@@ -930,12 +928,14 @@ namespace DotNetNuke.Modules.Links
 
                     linkHyp.HRef = FormatURL(link.Url, link.TrackClicks);
                     linkHyp.Target = link.NewWindow ? "_blank" : "_self";
+                    if (ShowPopup && link.Description != "")
+                    {
+                        linkHyp.Title = link.Description;
+                    }
 
                     lbldescrdiv.Text = HtmlDecode(link.Description);
 
                     spnSelect.Visible = DisplayInfo(link.Description);
-
-                    radToolTip.Visible = (ShowPopup && link.Description != "");
 
                     editLink.NavigateUrl = EditUrl("ItemId", link.ItemId.ToString());
                 }

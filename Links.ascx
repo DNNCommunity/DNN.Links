@@ -1,6 +1,5 @@
 <%@ Control Language="C#" Inherits="DotNetNuke.Modules.Links.Links"
     AutoEventWireup="true" Explicit="True" Codebehind="Links.ascx.cs" %>
-<%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <asp:Panel ID="pnlList" runat="server" CssClass="link_module" >
     <asp:Repeater ID="lstLinks" runat="server" OnItemDataBound="lstLinks_ItemDataBound">
@@ -25,11 +24,6 @@
                 <asp:Panel ID="pnlDescription" CssClass="item_desc" Style="display: none" runat="server">
                     <asp:Label runat="server" CssClass="Normal" ID="lbldescrdiv" />
                 </asp:Panel>
-                <telerik:RadToolTip ID="radToolTip" runat="server" TargetControlID="linkHyp" RelativeTo="Element"
-                    Position="BottomCenter" RenderInPageRoot="true" EnableShadow="true" Animation="Slide"
-                    AnimationDuration="150" ShowDelay="200" AutoCloseDelay="0" Skin="Telerik" Width="300">
-                    <%# HtmlDecode(Eval("Description").ToString()) %>
-                </telerik:RadToolTip>
             </li>
         </ItemTemplate>
         <FooterTemplate>

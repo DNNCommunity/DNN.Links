@@ -79,9 +79,9 @@
         </td>
         <td valign="bottom">
             <asp:RadioButtonList ID="optInfo" runat="server" CssClass="NormalTextBox" RepeatDirection="Horizontal">
-                <asp:ListItem resourcekey="No" Value="N">No</asp:ListItem>
-                <asp:ListItem resourcekey="Yes" Value="Y">Yes</asp:ListItem>
-                <asp:ListItem resourcekey="plUsePopup" Value="JQ">Telerik Popup</asp:ListItem>
+                <asp:ListItem resourcekey="None" Value="N">None</asp:ListItem>
+                <asp:ListItem resourcekey="plUseEllipsis" Value="Y">Ellipsis</asp:ListItem>
+                <asp:ListItem resourcekey="plUseTooltip" Value="JQ">Tooltip</asp:ListItem>
             </asp:RadioButtonList>
         </td>
     </tr>
