@@ -1,4 +1,4 @@
-﻿<dotnetnuke type="Package" version="5.0">
+<dotnetnuke type="Package" version="5.0">
   <packages>
     <package name="DNN_Links" type="Module" version="8.0.0">
       <friendlyName>Links</friendlyName>
@@ -98,7 +98,7 @@
           <desktopModule>
             <moduleName>DNN_Links</moduleName>
             <foldername>Links</foldername>
-            <businessControllerClass>DotNetNuke.Modules.Links.Components.FeatureController</businessControllerClass>
+            <businessControllerClass>DotNetNuke.Modules.Links.Components.FeatureController, DotNetNuke.Modules.Links</businessControllerClass>
             <supportedFeatures>
               <supportedFeature type="Portable" />
               <supportedFeature type="Searchable" />
@@ -150,7 +150,7 @@
             <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
             <processorCommand>UpgradeModule</processorCommand>
             <attributes>
-              <businessControllerClass>DotNetNuke.Modules.Links.Components.FeatureController</businessControllerClass>
+              <businessControllerClass>DotNetNuke.Modules.Links.Components.FeatureController, DotNetNuke.Modules.Links</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
               <upgradeVersionsList>03.01.00,03.03.00,03.03.06,04.00.00,04.00.01,04.01.00,04.01.01,07.00.00</upgradeVersionsList>
             </attributes>
