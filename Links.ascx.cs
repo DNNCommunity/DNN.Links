@@ -43,6 +43,7 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Modules.Links.Components;
 using System.Collections;
+using System.Threading;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Localization;
 using System.Web.UI.HtmlControls;
@@ -450,12 +451,7 @@ namespace DotNetNuke.Modules.Links
                 return result;
             }
         }
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            this.Load += Page_Load;
-        }       
+        
 
         /// -----------------------------------------------------------------------------
         ///         ''' <summary>
@@ -471,7 +467,8 @@ namespace DotNetNuke.Modules.Links
         {
             try
             {
-                if (System.Convert.ToString(this.Settings[SettingName.LinkDescriptionMode]) == Consts.ShowLinkDescriptionYes)
+                if (System.Convert.ToString(this.Settings[SettingName.LinkDescriptionMode]) ==
+                    Consts.ShowLinkDescriptionYes)
                 {
                     if (!this.Page.ClientScript.IsClientScriptIncludeRegistered(Consts.ToogleJS))
                     {
@@ -479,7 +476,7 @@ namespace DotNetNuke.Modules.Links
                         this.Page.ClientScript.RegisterClientScriptInclude(Consts.PopupJS, jspath);
                     }
                 }
-                
+
                 if (Convert.ToString(Settings[SettingName.DisplayMode]) == Consts.DisplayModeDropdown)
                 {
                     pnlList.Visible = false;
@@ -492,7 +489,7 @@ namespace DotNetNuke.Modules.Links
                 }
 
                 if (!Page.IsPostBack)
-                {                    
+                {
                     if (Request.Params[Consts.FileId] != null)
                         this.FileId = System.Convert.ToInt32(Request.Params[Consts.FileId]);
 
@@ -508,7 +505,8 @@ namespace DotNetNuke.Modules.Links
 
                             if (folderInfo != null)
                             {
-                                if (DotNetNuke.Security.Permissions.FolderPermissionController.HasFolderPermission(this.PortalId, folderInfo.FolderPath, "READ"))
+                                if (DotNetNuke.Security.Permissions.FolderPermissionController.HasFolderPermission(
+                                        this.PortalId, folderInfo.FolderPath, "READ"))
                                 {
                                     FileManager.Instance.WriteFileToResponse(fileInfo, ContentDisposition.Attachment);
                                 }
@@ -516,7 +514,8 @@ namespace DotNetNuke.Modules.Links
                         }
                     }
 
-                    DotNetNuke.Security.Roles.RoleController roleController = new DotNetNuke.Security.Roles.RoleController();
+                    DotNetNuke.Security.Roles.RoleController roleController =
+                        new DotNetNuke.Security.Roles.RoleController();
 
                     var roles = roleController.GetUserRoles(UserInfo, true);
                     bool isInARole = false;
@@ -527,110 +526,116 @@ namespace DotNetNuke.Modules.Links
                     switch (this.ModuleContentType)
                     {
                         case Enums.ModuleContentTypes.Links:
-                            {
-                                links = LinkController.GetLinks(ModuleId).ToList();
+                        {
+                            links = LinkController.GetLinks(ModuleId).ToList();
 
-                                string imgUrl = DotNetNuke.Common.Globals.LinkClick(ImageFileId, TabId, ModuleId);
-                                foreach (var link in links)
-                                    link.ImageURL = imgUrl;
-                                break;
-                            }
+                            string imgUrl = DotNetNuke.Common.Globals.LinkClick(ImageFileId, TabId, ModuleId);
+                            foreach (var link in links)
+                                link.ImageURL = imgUrl;
+                            break;
+                        }
 
                         case Enums.ModuleContentTypes.Menu:
+                        {
+                            List<TabInfo> tabsToShow = new List<TabInfo>();
+                            if (Settings.ContainsKey(Consts.ModuleContentItem))
                             {
-                                List<TabInfo> tabsToShow = new List<TabInfo>();
-                                if (Settings.ContainsKey(Consts.ModuleContentItem)) {
-                                    string moduleContentItem = Settings[Consts.ModuleContentItem].ToString();
-                                    int.TryParse(moduleContentItem, out int moduleContentItemInt);
-                                    tabsToShow = TabController.GetTabsByParent(moduleContentItemInt, this.PortalId);
-                                }
-
-                                foreach (DotNetNuke.Entities.Tabs.TabInfo tabinfo in tabsToShow)
-                                {
-
-                                    // 1.0.2 - Workaround for dnn powered content localization - [alexander.zimmer] & [simon.meraner]
-                                    // serialize tab object in order to be able to identify whether the content localization is active. 
-                                    System.Xml.Serialization.XmlSerializer tabSerializer = new System.Xml.Serialization.XmlSerializer(typeof(DotNetNuke.Entities.Tabs.TabInfo));
-                                    System.IO.StringWriter stream = new System.IO.StringWriter();
-                                    tabSerializer.Serialize(stream, tabinfo);
-
-                                    System.IO.StringReader sr = new System.IO.StringReader(stream.ToString());
-                                    XmlDocument xmlDoc = new XmlDocument();
-                                    xmlDoc.Load(sr);
-
-                                    stream.Close();
-
-                                    var tabCulture = xmlDoc.SelectSingleNode("/tab/cultureCode");
-
-                                    bool showCulture = true;
-
-                                    if (tabCulture != null)
-                                    {
-                                        XmlNode cultureNode = tabCulture.FirstChild;
-
-                                        // dnn 5.5.x detected ... exclude tabs where the cultures doesn`t matcj the current culture
-                                        if (cultureNode != null && cultureNode.Value != System.Threading.Thread.CurrentThread.CurrentCulture.Name)
-                                            showCulture = false;
-                                    }
-
-                                    // -------------------------------------------------------------------------------------------------------
-
-                                    if (showCulture)
-                                    {
-                                        Link link = new Link();
-
-                                        link.ModuleId = ModuleId;
-                                        link.Url = DotNetNuke.Common.Globals.NavigateURL(tabinfo.TabID);
-                                        link.NewWindow = false;
-                                        link.Title = tabinfo.TabName;
-                                        link.GrantRoles = ";";
-                                        link.Description = tabinfo.Description;
-                                        link.ItemId = tabinfo.TabID;
-                                        // 2014 TODO: Menu
-                                        if (MenuAllUser.Equals("No"))
-                                        {
-                                            foreach (var role in tabinfo.TabPermissions.ToList())
-                                                link.GrantRoles += role.RoleID + ";";
-                                        }
-                                        else
-                                            // -2: All Users; -1: Unauthenticated Users
-                                            link.GrantRoles += "-2;";
-
-                                        links.Add(link);
-                                    }
-                                }
-
-                                break;
+                                string moduleContentItem = Settings[Consts.ModuleContentItem].ToString();
+                                int.TryParse(moduleContentItem, out int moduleContentItemInt);
+                                tabsToShow = TabController.GetTabsByParent(moduleContentItemInt, this.PortalId);
                             }
 
-                        case Enums.ModuleContentTypes.Folder:
-                            {                                
-                                var folder = FolderManager.Instance.GetFolder(FolderId);
-                                var files = FolderManager.Instance.GetFiles(folder);
+                            foreach (DotNetNuke.Entities.Tabs.TabInfo tabinfo in tabsToShow)
+                            {
 
-                                foreach (DotNetNuke.Services.FileSystem.FileInfo file in files)
+                                // 1.0.2 - Workaround for dnn powered content localization - [alexander.zimmer] & [simon.meraner]
+                                // serialize tab object in order to be able to identify whether the content localization is active. 
+                                System.Xml.Serialization.XmlSerializer tabSerializer =
+                                    new System.Xml.Serialization.XmlSerializer(
+                                        typeof(DotNetNuke.Entities.Tabs.TabInfo));
+                                System.IO.StringWriter stream = new System.IO.StringWriter();
+                                tabSerializer.Serialize(stream, tabinfo);
+
+                                System.IO.StringReader sr = new System.IO.StringReader(stream.ToString());
+                                XmlDocument xmlDoc = new XmlDocument();
+                                xmlDoc.Load(sr);
+
+                                stream.Close();
+
+                                var tabCulture = xmlDoc.SelectSingleNode("/tab/cultureCode");
+
+                                bool showCulture = true;
+
+                                if (tabCulture != null)
+                                {
+                                    XmlNode cultureNode = tabCulture.FirstChild;
+
+                                    // dnn 5.5.x detected ... exclude tabs where the cultures doesn`t matcj the current culture
+                                    if (cultureNode != null && cultureNode.Value !=
+                                        System.Threading.Thread.CurrentThread.CurrentCulture.Name)
+                                        showCulture = false;
+                                }
+
+                                // -------------------------------------------------------------------------------------------------------
+
+                                if (showCulture)
                                 {
                                     Link link = new Link();
 
+                                    link.ModuleId = ModuleId;
+                                    link.Url = DotNetNuke.Common.Globals.NavigateURL(tabinfo.TabID);
                                     link.NewWindow = false;
-                                    link.Title = file.FileName;
-                                    link.ItemId = file.FileId;
-                                    link.Url = DotNetNuke.Common.Globals.NavigateURL(this.TabId, string.Empty, "FileId=" + file.FileId.ToString());
+                                    link.Title = tabinfo.TabName;
                                     link.GrantRoles = ";";
-                                    link.Description =  Utils.GetFileSizeString(file.Size);
-                                    link.ImageURL = Utils.GetImageURL(file.Extension);
-
-                                    foreach (var permission in this.FolderPermissions.ToList())
+                                    link.Description = tabinfo.Description;
+                                    link.ItemId = tabinfo.TabID;
+                                    // 2014 TODO: Menu
+                                    if (MenuAllUser.Equals("No"))
                                     {
-                                        if (permission.AllowAccess == true && permission.PermissionKey == "READ" && permission.UserID == Null.NullInteger)
-                                            link.GrantRoles += permission.RoleID + ";";
+                                        foreach (var role in tabinfo.TabPermissions.ToList())
+                                            link.GrantRoles += role.RoleID + ";";
                                     }
+                                    else
+                                        // -2: All Users; -1: Unauthenticated Users
+                                        link.GrantRoles += "-2;";
 
                                     links.Add(link);
                                 }
-
-                                break;
                             }
+
+                            break;
+                        }
+
+                        case Enums.ModuleContentTypes.Folder:
+                        {
+                            var folder = FolderManager.Instance.GetFolder(FolderId);
+                            var files = FolderManager.Instance.GetFiles(folder);
+
+                            foreach (DotNetNuke.Services.FileSystem.FileInfo file in files)
+                            {
+                                Link link = new Link();
+
+                                link.NewWindow = false;
+                                link.Title = file.FileName;
+                                link.ItemId = file.FileId;
+                                link.Url = DotNetNuke.Common.Globals.NavigateURL(this.TabId, string.Empty,
+                                    "FileId=" + file.FileId.ToString());
+                                link.GrantRoles = ";";
+                                link.Description = Utils.GetFileSizeString(file.Size);
+                                link.ImageURL = Utils.GetImageURL(file.Extension);
+
+                                foreach (var permission in this.FolderPermissions.ToList())
+                                {
+                                    if (permission.AllowAccess == true && permission.PermissionKey == "READ" &&
+                                        permission.UserID == Null.NullInteger)
+                                        link.GrantRoles += permission.RoleID + ";";
+                                }
+
+                                links.Add(link);
+                            }
+
+                            break;
+                        }
                     }
 
                     if (this.DisplayMode == Consts.DisplayModeDropdown)
@@ -665,7 +670,9 @@ namespace DotNetNuke.Modules.Links
                                     isInARole = true;
                             }
 
-                            if (!this.UsePermissions | isInARole | link.GrantRoles.Contains(";-2;") | link.GrantRoles.Contains(";-1;") | this.UserInfo.IsSuperUser | this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
+                            if (!this.UsePermissions | isInARole | link.GrantRoles.Contains(";-2;") |
+                                link.GrantRoles.Contains(";-1;") | this.UserInfo.IsSuperUser |
+                                this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
 
                                 linksToShow.Add(link);
                         }
@@ -675,17 +682,17 @@ namespace DotNetNuke.Modules.Links
                         switch (this.ModuleContentType)
                         {
                             case Enums.ModuleContentTypes.Menu:
-                                {
-                                    cboLinks.DataValueField = "ItemId";
-                                    break;
-                                }
+                            {
+                                cboLinks.DataValueField = "ItemId";
+                                break;
+                            }
 
                             case Enums.ModuleContentTypes.Folder:
-                                {
-                                    cboLinks.DataValueField = "ItemId";
-                                    cboLinks.DataTextField = "Title";
-                                    break;
-                                }
+                            {
+                                cboLinks.DataValueField = "ItemId";
+                                cboLinks.DataTextField = "Title";
+                                break;
+                            }
                         }
 
                         cboLinks.DataBind();
@@ -711,7 +718,9 @@ namespace DotNetNuke.Modules.Links
                                     isInARole = true;
                             }
 
-                            if (isInARole | link.GrantRoles.Contains("-2") | link.GrantRoles.Contains("-1") | this.UserInfo.IsSuperUser | this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
+                            if (isInARole | link.GrantRoles.Contains("-2") | link.GrantRoles.Contains("-1") |
+                                this.UserInfo.IsSuperUser |
+                                this.UserInfo.IsInRole(this.PortalSettings.AdministratorRoleName))
 
                                 linksToShow.Add(link);
                         }
@@ -721,6 +730,10 @@ namespace DotNetNuke.Modules.Links
                     }
                 }
             }
+            catch (ThreadAbortException)
+            {
+                // This is to be expected when serving a file from Page_load.
+            }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
@@ -729,7 +742,7 @@ namespace DotNetNuke.Modules.Links
 
         /// -----------------------------------------------------------------------------
         ///         ''' <summary>
-        ///         ''' cmdEdit_Click runs when the edit button is clciked
+        ///         ''' cmdEdit_Click runs when the edit button is clicked
         ///         ''' </summary>
         ///         ''' <remarks>
         ///         ''' </remarks>
