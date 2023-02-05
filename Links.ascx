@@ -4,7 +4,7 @@
 <asp:Panel ID="pnlList" runat="server" CssClass="link_module" >
     <asp:Repeater ID="lstLinks" runat="server" OnItemDataBound="lstLinks_ItemDataBound">
         <HeaderTemplate>
-            <ul id="ulHeader" class="linklist <%# Horizontal %>" ></ul>
+            <ul id="ulHeader" class="linklist <%# Horizontal %>" >
         </HeaderTemplate>
         <ItemTemplate>
             <li id="itemLi" class="linkitem <%# Horizontal %>" <%# NoWrap %>>
