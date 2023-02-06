@@ -1,15 +1,25 @@
-﻿using DotNetNuke.Entities.Modules;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
 
 namespace DotNetNuke.Modules.Links
 {
+    /// <summary>
+    /// Utilities for the Links module.
+    /// </summary>
     public class Utils
     {
-        public static string GetImageURL(string FileExtension)
+        /// <summary>
+        /// Gets the image URL.
+        /// </summary>
+        /// <param name="fileExtension">The file extension for the image.</param>
+        /// <returns>A string representing the url to the image.</returns>
+        public static string GetImageURL(string fileExtension)
         {
             string result = string.Empty;
             string baseURL = "~/images/FileManager/Icons/";
 
-            switch (FileExtension)
+            switch (fileExtension)
             {
                 case "bmp":
                     {
@@ -147,16 +157,27 @@ namespace DotNetNuke.Modules.Links
             return result;
         }
 
-        public static string GetFileSizeString(int FileSize)
+        /// <summary>
+        /// Gets a friendly string for a file size.
+        /// </summary>
+        /// <param name="fileSize">Size of the file.</param>
+        /// <returns>A human readable file size string.</returns>
+        public static string GetFileSizeString(int fileSize)
         {
             string result = string.Empty;
 
-            if (FileSize < 100)
-                result = System.Convert.ToString(FileSize) + " B";
-            else if (FileSize >= 100 & FileSize < 100000)
-                result = (FileSize / (double)1000).ToString("0.0") + " KB";
-            else if (FileSize >= 100000)
-                result = (FileSize / (double)1000000).ToString("0.0") + " MB";
+            if (fileSize < 100)
+            {
+                result = System.Convert.ToString(fileSize) + " B";
+            }
+            else if (fileSize >= 100 & fileSize < 100000)
+            {
+                result = (fileSize / 1000D).ToString("0.0") + " KB";
+            }
+            else if (fileSize >= 100000)
+            {
+                result = (fileSize / 1000000D).ToString("0.0") + " MB";
+            }
 
             return result;
         }

@@ -1,25 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Security.Roles;
-using DotNetNuke.Services.Search.Entities;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
 
 namespace DotNetNuke.Modules.Links.Components
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Xml;
+
+    using DotNetNuke.Common.Utilities;
+    using DotNetNuke.Entities.Modules;
+    using DotNetNuke.Security.Roles;
+    using DotNetNuke.Services.Search.Entities;
+
     /// <summary>
-    /// Modules interface implementations
+    /// Modules interface implementations.
     /// </summary>
     public class FeatureController : ModuleSearchBase, IPortable
     {
         /// <summary>
-        /// Exports the module (Implements the IPortable interface)
+        /// Exports the module (Implements the IPortable interface).
         /// </summary>
-        /// <param name="moduleID">The module ID</param>
-        /// <returns>XML String of the module data</returns>
+        /// <param name="moduleID">The module ID.</param>
+        /// <returns>XML String of the module data.</returns>
         public string ExportModule(int moduleID)
         {
             StringBuilder xml = new StringBuilder();
@@ -28,7 +33,7 @@ namespace DotNetNuke.Modules.Links.Components
             {
                 var module = ModuleController.Instance.GetModule(moduleID, DotNetNuke.Common.Utilities.Null.NullInteger, false);
                 var portalId = module?.PortalID ?? Null.NullInteger;
-                xml.Append("<links>");                
+                xml.Append("<links>");
                 foreach (var link in links)
                 {
                     xml.Append("<link>");
@@ -40,7 +45,7 @@ namespace DotNetNuke.Modules.Links.Components
                     xml.AppendFormat("<trackclicks>{0}</trackclicks>", XmlUtils.XMLEncode(link.TrackClicks.ToString()));
                     xml.AppendFormat("<logactivity>{0}</logactivity>", XmlUtils.XMLEncode(link.LogActivity.ToString()));
                     xml.AppendFormat("<refreshinterval>{0}</refreshinterval>", XmlUtils.XMLEncode(link.RefreshInterval.ToString()));
-                    xml.AppendFormat("<grantroles>{0}</grantroles>", XmlUtils.XMLEncode(ConvertToRoleNames(portalId, link.GrantRoles)));
+                    xml.AppendFormat("<grantroles>{0}</grantroles>", XmlUtils.XMLEncode(this.ConvertToRoleNames(portalId, link.GrantRoles)));
                     xml.Append("</link>");
                 }
 
@@ -49,14 +54,14 @@ namespace DotNetNuke.Modules.Links.Components
 
             return xml.ToString();
         }
-        
+
         /// <summary>
-        /// Imports xml to fill the module data
+        /// Imports xml to fill the module data.
         /// </summary>
-        /// <param name="moduleID">The module ID importing</param>
-        /// <param name="content">The data representation to import in an XML string</param>
-        /// <param name="version">The version of the export</param>
-        /// <param name="userId">The user ID of the user importing the data</param>
+        /// <param name="moduleID">The module ID importing.</param>
+        /// <param name="content">The data representation to import in an XML string.</param>
+        /// <param name="version">The version of the export.</param>
+        /// <param name="userId">The user ID of the user importing the data.</param>
         public void ImportModule(int moduleID, string content, string version, int userId)
         {
             var module = ModuleController.Instance.GetModule(moduleID, DotNetNuke.Common.Utilities.Null.NullInteger, false);
@@ -67,30 +72,31 @@ namespace DotNetNuke.Modules.Links.Components
             var xmlLinks = xmlDoc.SelectNodes("links/link");
             foreach (XmlNode xmlLink in xmlLinks)
             {
-                int viewOrder = int.TryParse(GetXmlNodeValue(xmlLink ,"vieworder"), out viewOrder) ? viewOrder : 0;
-                bool newWindow = bool.TryParse(GetXmlNodeValue(xmlLink, "newwindow"), out newWindow) ? newWindow : false;
+                int viewOrder = int.TryParse(this.GetXmlNodeValue(xmlLink, "vieworder"), out viewOrder) ? viewOrder : 0;
+                bool newWindow = bool.TryParse(this.GetXmlNodeValue(xmlLink, "newwindow"), out newWindow) ? newWindow : false;
                 Link link = new Link
                 {
                     ModuleId = moduleID,
-                    Title = GetXmlNodeValue(xmlLink, "title"),
-                    Url = DotNetNuke.Common.Globals.ImportUrl(moduleID, GetXmlNodeValue(xmlLink, "url")),
+                    Title = this.GetXmlNodeValue(xmlLink, "title"),
+                    Url = DotNetNuke.Common.Globals.ImportUrl(moduleID, this.GetXmlNodeValue(xmlLink, "url")),
                     ViewOrder = viewOrder,
-                    Description = GetXmlNodeValue(xmlLink, "description"),
-                    GrantRoles = ConvertToRoleIds(portalId, GetXmlNodeValue(xmlLink, "grantroles")),
+                    Description = this.GetXmlNodeValue(xmlLink, "description"),
+                    GrantRoles = this.ConvertToRoleIds(portalId, this.GetXmlNodeValue(xmlLink, "grantroles")),
                 };
 
                 link.NewWindow = newWindow;
 
-                if (bool.TryParse(GetXmlNodeValue(xmlLink, "trackclicks"), out bool trackClicks))
+                if (bool.TryParse(this.GetXmlNodeValue(xmlLink, "trackclicks"), out bool trackClicks))
                 {
                     link.TrackClicks = trackClicks;
                 }
-                if (bool.TryParse(GetXmlNodeValue(xmlLink, "logactivity"), out bool logActivity))
+
+                if (bool.TryParse(this.GetXmlNodeValue(xmlLink, "logactivity"), out bool logActivity))
                 {
                     link.LogActivity = logActivity;
                 }
 
-                if (int.TryParse(GetXmlNodeValue(xmlLink, "refreshinterval"), out int refreshInterval))
+                if (int.TryParse(this.GetXmlNodeValue(xmlLink, "refreshinterval"), out int refreshInterval))
                 {
                     link.RefreshInterval = refreshInterval;
                 }
@@ -104,20 +110,21 @@ namespace DotNetNuke.Modules.Links.Components
                 UrlController objUrls = new UrlController();
                 var moduleInfo = ModuleController.Instance.GetModule(moduleID, Null.NullInteger, false);
                 objUrls.UpdateUrl(
-                    moduleInfo.PortalID, 
+                    moduleInfo.PortalID,
                     link.Url,
-                    LinkController.ConvertUrlType(DotNetNuke.Common.Globals.GetURLType(link.Url)), 
+                    LinkController.ConvertUrlType(DotNetNuke.Common.Globals.GetURLType(link.Url)),
                     link.LogActivity,
-                    link.TrackClicks, 
-                    moduleID, 
+                    link.TrackClicks,
+                    moduleID,
                     link.NewWindow);
             }
         }
 
+        /// <inheritdoc/>
         public override IList<SearchDocument> GetModifiedSearchDocuments(ModuleInfo moduleInfo, DateTime beginDateUtc)
         {
             // TODO: Would be better performing if we had a last modified date and soft deletes
-            DotNetNuke.Services.Search.Internals.InternalSearchController.Instance.DeleteSearchDocumentsByModule(moduleInfo.PortalID, moduleInfo.ModuleID, moduleInfo.ModuleDefID);
+            Services.Search.Internals.InternalSearchController.Instance.DeleteSearchDocumentsByModule(moduleInfo.PortalID, moduleInfo.ModuleID, moduleInfo.ModuleDefID);
             List<SearchDocument> searchDocuments = new List<SearchDocument>();
             var links = LinkController.GetLinks(moduleInfo.ModuleID);
             foreach (var link in links)
@@ -129,7 +136,7 @@ namespace DotNetNuke.Modules.Links.Components
                     Title = link.Title,
                     Description = link.Description,
                     Body = link.Description,
-                    ModifiedTimeUtc = link.CreatedDate
+                    ModifiedTimeUtc = link.CreatedDate,
                 };
                 searchDocuments.Add(searchDoc);
             }
@@ -156,7 +163,7 @@ namespace DotNetNuke.Modules.Links.Components
             }
 
             var roles = string.Empty;
-            foreach (var roleId in grantRoles.Split(new []{';'}, StringSplitOptions.RemoveEmptyEntries).Select(i => Convert.ToInt32(i)))
+            foreach (var roleId in grantRoles.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(i => Convert.ToInt32(i)))
             {
                 var role = RoleController.Instance.GetRoleById(portalId, roleId);
                 if (role != null)

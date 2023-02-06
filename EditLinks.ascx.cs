@@ -1,252 +1,83 @@
-﻿// DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2008
-// by DotNetNuke Corporation
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-// of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-// DEALINGS IN THE SOFTWARE.
-// 
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using System.Web.UI.WebControls;
-using DotNetNuke;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.UI.Utilities;
-using DotNetNuke.Security.Roles;
-using DotNetNuke.Modules.Links.Components;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Services.Localization;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
 
 namespace DotNetNuke.Modules.Links
 {
+    using System;
+    using System.Security;
+    using System.Web.UI.WebControls;
 
-    /// -----------------------------------------------------------------------------
-    ///     ''' <summary>
-    /// 	''' The EditLinks PortalModuleBase is used to manage the Links
-    /// 	''' </summary>
-    ///     ''' <remarks>
-    /// 	''' </remarks>
-    /// 	''' <history>
-    /// 	''' 	[cnurse]	9/23/2004	Moved Links to a separate Project
-    /// 	''' 	[cnurse]	9/23/2004	Updated to reflect design changes for Help, 508 support
-    /// 	'''                       and localisation
-    /// 	''' </history>
-    /// 	''' -----------------------------------------------------------------------------
+    using DotNetNuke.Common.Utilities;
+    using DotNetNuke.Entities.Modules;
+    using DotNetNuke.Modules.Links.Components;
+    using DotNetNuke.Security.Roles;
+    using DotNetNuke.Services.Exceptions;
+    using DotNetNuke.Services.Localization;
+    using DotNetNuke.UI.Utilities;
+
+    /// <summary>
+    /// Codebehind for editing links user interface.
+    /// </summary>
     public partial class EditLinks : PortalModuleBase
     {
-        protected DotNetNuke.UI.UserControls.UrlControl ctlURL;
-        protected DotNetNuke.UI.UserControls.ModuleAuditControl ctlAudit;
-        protected DotNetNuke.UI.UserControls.URLTrackingControl ctlTracking;
+#pragma warning disable SA1401 // Fields should be private
+        /// <summary>
+        /// The URL control.
+        /// </summary>
+        protected UI.UserControls.UrlControl ctlURL;
 
+        /// <summary>
+        /// The audit control.
+        /// </summary>
+        protected UI.UserControls.ModuleAuditControl ctlAudit;
+
+        /// <summary>
+        /// The urlTracking control.
+        /// </summary>
+        protected UI.UserControls.URLTrackingControl ctlTracking;
+#pragma warning restore SA1401 // Fields should be private
 
         private int itemId = -1;
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            this.Load += Page_Load;
-        }
-
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' Page_Load runs when the control is loaded
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         ''' 	[cnurse]	9/23/2004	Updated to reflect design changes for Help, 508 support
-        ///         '''                       and localisation
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
-        private void Page_Load(System.Object sender, System.EventArgs e)
+        /// <summary>
+        /// Handles the Click event of the cmdCancel control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+        public void cmdCancel_Click(object sender, EventArgs e)
+#pragma warning restore SA1300 // Element should begin with upper-case letter
         {
             try
             {
-                // Determine ItemId of Link to Update
-
-                if (Request.QueryString["ItemId"] != null)
-                {
-                    int.TryParse(Request.QueryString["ItemId"], out itemId);
-                }
-
-                // If the page is being requested the first time, determine if an
-                // link itemId value is specified, and if so populate page
-                // contents with the link details
-                if (Page.IsPostBack == false)
-                {
-                    // Deprecated, implemented below but kept here for some time just for reference
-                    // tblGetContent.Visible = System.Security.SecurityManager.IsGranted(new System.Net.WebPermission(System.Net.NetworkAccess.Connect, "http://www.dotnetnuke.com"));                    
-                    var permissionSet = new PermissionSet(System.Security.Permissions.PermissionState.None);
-                    permissionSet.AddPermission(new System.Net.WebPermission(System.Net.NetworkAccess.Connect, "http://www.dotnetnuke.com"));
-                    tblGetContent.Visible = permissionSet.IsSubsetOf(AppDomain.CurrentDomain.PermissionSet);
-
-                    var roles = RoleController.Instance.GetRoles(this.PortalId);
-
-                    ddlViewOrderLinks.DataSource = LinkController.GetLinks(this.ModuleId);
-                    ddlViewOrderLinks.DataTextField = "Title";
-                    ddlViewOrderLinks.DataValueField = "ViewOrder";
-                    ddlViewOrderLinks.DataBind();
-
-                    cblGrantRoles.DataSource = roles;
-                    cblGrantRoles.DataTextField = "RoleName";
-                    cblGrantRoles.DataValueField = "RoleID";
-                    cblGrantRoles.DataBind();
-
-                    ClientAPI.AddButtonConfirm(cmdDelete, Services.Localization.Localization.GetString("DeleteItem"));
-
-                    if (itemId != -1)
-                    {
-
-                        // Obtain a single row of link information
-                        
-                        var objLink = LinkController.GetLink(itemId, ModuleId);
-
-                        if (objLink != null)
-                        {
-                            ddlViewOrderLinks.Items.Remove(ddlViewOrderLinks.Items.FindByText(objLink.Title));
-
-                            if (ddlViewOrderLinks.Items.Count > 0)
-                            {
-                                ddlViewOrderLinks.SelectedValue = LinkController.GetLinkByHigherViewOrder(objLink.ViewOrder, this.ModuleId).ToString();
-
-                                if (int.Parse(ddlViewOrderLinks.SelectedValue) < objLink.ViewOrder)
-                                    ddlViewOrder.SelectedValue = "A";
-                                else
-                                    ddlViewOrder.SelectedValue = "B";
-                            }
-
-                            txtTitle.Text = objLink.Title.ToString();
-                            
-                            ctlURL.Url = objLink.Url;
-
-                            // Probably no longer needed
-                            //ctlURL.ShowDatabase = true;
-                            //ctlURL.ShowSecure = true;
-
-                            // chkGetContent.Checked = objLink.RefreshContent
-                            
-                            string urlType = LinkController.ConvertUrlType(DotNetNuke.Common.Globals.GetURLType(objLink.Url));
-
-                            if (urlType != "U")
-                                tblGetContent.Visible = false;
-
-                            txtDescription.Text = objLink.Description.ToString();
-
-                            // If (Common.Utilities.Null.IsNull(objLink.ViewOrder) = False) Then
-                            // txtViewOrder.Text = Convert.ToString(objLink.ViewOrder)
-                            // End If
-
-                            ddlGetContentInterval.SelectedValue = objLink.RefreshInterval.ToString();
-
-                            ctlAudit.CreatedByUser = objLink.CreatedByUser.ToString();
-                            ctlAudit.CreatedDate = objLink.CreatedDate.ToString();
-
-                            ctlTracking.URL = objLink.Url;
-                            ctlTracking.ModuleID = ModuleId;
-
-                            foreach (ListItem cb in cblGrantRoles.Items)
-                                cb.Selected = objLink.GrantRoles.Contains(";" + cb.Value + ";");
-                        }
-                        else
-                            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
-                    }
-                    else
-                    {
-                        cmdDelete.Visible = false;
-                        ctlAudit.Visible = false;
-                        ctlTracking.Visible = false;
-                    }
-                }
+                this.Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
             }
             catch (Exception exc)
-            {                
+            {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
         /// <summary>
-        ///         ''' Hide get content functionality if resource url type is none external url
-        ///         ''' </summary>
-        ///         ''' <param name="sender"></param>
-        ///         ''' <param name="e"></param>
-        ///         ''' <remarks></remarks>
-        protected void Page_PreRender(object sender, System.EventArgs e)
-        {
-
-            // hide get content functionality when externel url isn`t selected
-            if (!string.IsNullOrEmpty(ctlURL.UrlType) && ctlURL.UrlType != "U")
-                tblGetContent.Visible = false;
-        }
-
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' cmdCancel_Click runs when the cancel button is clicked
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         ''' 	[cnurse]	9/23/2004	Updated to reflect design changes for Help, 508 support
-        ///         '''                       and localisation
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
-        public void cmdCancel_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' cmdDelete_Click runs when the delete button is clicked
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         ''' 	[cnurse]	9/23/2004	Updated to reflect design changes for Help, 508 support
-        ///         '''                       and localisation
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
+        /// Handles the Click event of the cmdDelete control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
         public void cmdDelete_Click(object sender, EventArgs e)
+#pragma warning restore SA1300 // Element should begin with upper-case letter
         {
             try
             {
-                if (itemId != -1)
-                {                    
-                    LinkController.DeleteLink(itemId, ModuleId);
-                    ModuleController.SynchronizeModule(ModuleId);
+                if (this.itemId != -1)
+                {
+                    LinkController.DeleteLink(this.itemId, this.ModuleId);
+                    ModuleController.SynchronizeModule(this.ModuleId);
                 }
 
                 // Redirect back to the portal home page
-                Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
+                this.Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
             }
             catch (Exception exc)
             {
@@ -254,54 +85,52 @@ namespace DotNetNuke.Modules.Links
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' cmdUpdate_Click runs when the update button is clicked
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         ''' 	[cnurse]	9/23/2004	Updated to reflect design changes for Help, 508 support
-        ///         '''                       and localisation
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
+        /// <summary>
+        /// Handles the Click event of the cmdUpdate control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
         public void cmdUpdate_Click(object sender, EventArgs e)
+#pragma warning restore SA1300 // Element should begin with upper-case letter
         {
             try
             {
-                if (Page.IsValid == true & ctlURL.Url != "")
+                if (this.Page.IsValid == true & this.ctlURL.Url != string.Empty)
                 {
-                    Link objLink = new Link();                    
+                    Link objLink = new Link();
 
                     // bind text values to object
-                    objLink.ItemId = itemId;
-                    objLink.ModuleId = ModuleId;
-                    objLink.CreatedByUser = UserInfo.UserID;
+                    objLink.ItemId = this.itemId;
+                    objLink.ModuleId = this.ModuleId;
+                    objLink.CreatedByUser = this.UserInfo.UserID;
                     objLink.CreatedDate = DateTime.Now;
-                    objLink.Title = txtTitle.Text;
-                    objLink.Url = ctlURL.Url;
+                    objLink.Title = this.txtTitle.Text;
+                    objLink.Url = this.ctlURL.Url;
 
                     int refreshInterval = 0;
 
-                    if (ctlURL.UrlType == "U")
-                        refreshInterval = System.Convert.ToInt32(ddlGetContentInterval.SelectedValue);
+                    if (this.ctlURL.UrlType == "U")
+                    {
+                        refreshInterval = System.Convert.ToInt32(this.ddlGetContentInterval.SelectedValue);
+                    }
 
                     objLink.RefreshInterval = refreshInterval;
 
-                    if ((ddlViewOrderLinks.Items.Count > 0))
+                    if (this.ddlViewOrderLinks.Items.Count > 0)
                     {
-                        switch (ddlViewOrder.SelectedValue)
+                        switch (this.ddlViewOrder.SelectedValue)
                         {
                             case "B":
                                 {
-                                    objLink.ViewOrder = Convert.ToInt32(ddlViewOrderLinks.SelectedValue) - 1;
+                                    objLink.ViewOrder = Convert.ToInt32(this.ddlViewOrderLinks.SelectedValue) - 1;
                                     LinkController.UpdateViewOrder(objLink, -1, this.ModuleId);
                                     break;
                                 }
 
                             case "A":
                                 {
-                                    objLink.ViewOrder = Convert.ToInt32(ddlViewOrderLinks.SelectedValue) + 1;
+                                    objLink.ViewOrder = Convert.ToInt32(this.ddlViewOrderLinks.SelectedValue) + 1;
                                     LinkController.UpdateViewOrder(objLink, 1, this.ModuleId);
                                     break;
                                 }
@@ -314,35 +143,154 @@ namespace DotNetNuke.Modules.Links
                         }
                     }
                     else
+                    {
                         objLink.ViewOrder = Null.NullInteger;
+                    }
 
-                    objLink.Description = txtDescription.Text;
+                    objLink.Description = this.txtDescription.Text;
                     objLink.GrantRoles = ";";
 
-                    foreach (ListItem cb in cblGrantRoles.Items)
+                    foreach (ListItem cb in this.cblGrantRoles.Items)
                     {
                         if (cb.Selected)
+                        {
                             objLink.GrantRoles += cb.Value + ";";
+                        }
                     }
 
                     if (objLink.GrantRoles.Equals(";"))
+                    {
                         objLink.GrantRoles += "0;";
+                    }
 
                     // Create an instance of the Link DB component
-
-                    if (Common.Utilities.Null.IsNull(itemId))
+                    if (Common.Utilities.Null.IsNull(this.itemId))
+                    {
                         LinkController.AddLink(objLink);
+                    }
                     else
+                    {
                         LinkController.UpdateLink(objLink);
+                    }
 
-                    ModuleController.SynchronizeModule(ModuleId);
+                    ModuleController.SynchronizeModule(this.ModuleId);
 
                     // url tracking
                     UrlController objUrls = new UrlController();
-                    objUrls.UpdateUrl(PortalId, ctlURL.Url, ctlURL.UrlType, ctlURL.Log, ctlURL.Track, ModuleId, ctlURL.NewWindow);
+                    objUrls.UpdateUrl(this.PortalId, this.ctlURL.Url, this.ctlURL.UrlType, this.ctlURL.Log, this.ctlURL.Track, this.ModuleId, this.ctlURL.NewWindow);
 
                     // Redirect back to the portal home page
-                    Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
+                    this.Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            this.Load += this.Page_Load;
+        }
+
+        /// <summary>
+        /// Handles the Load event of the Page control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                // Determine ItemId of Link to Update
+                if (this.Request.QueryString["ItemId"] != null)
+                {
+                    int.TryParse(this.Request.QueryString["ItemId"], out this.itemId);
+                }
+
+                // If the page is being requested the first time, determine if an
+                // link itemId value is specified, and if so populate page
+                // contents with the link details
+                if (this.Page.IsPostBack == false)
+                {
+                    var permissionSet = new PermissionSet(System.Security.Permissions.PermissionState.None);
+                    permissionSet.AddPermission(new System.Net.WebPermission(System.Net.NetworkAccess.Connect, "http://www.dotnetnuke.com"));
+                    this.tblGetContent.Visible = permissionSet.IsSubsetOf(AppDomain.CurrentDomain.PermissionSet);
+
+                    var roles = RoleController.Instance.GetRoles(this.PortalId);
+
+                    this.ddlViewOrderLinks.DataSource = LinkController.GetLinks(this.ModuleId);
+                    this.ddlViewOrderLinks.DataTextField = "Title";
+                    this.ddlViewOrderLinks.DataValueField = "ViewOrder";
+                    this.ddlViewOrderLinks.DataBind();
+
+                    this.cblGrantRoles.DataSource = roles;
+                    this.cblGrantRoles.DataTextField = "RoleName";
+                    this.cblGrantRoles.DataValueField = "RoleID";
+                    this.cblGrantRoles.DataBind();
+
+                    ClientAPI.AddButtonConfirm(this.cmdDelete, Services.Localization.Localization.GetString("DeleteItem"));
+
+                    if (this.itemId != -1)
+                    {
+                        // Obtain a single row of link information
+                        var objLink = LinkController.GetLink(this.itemId, this.ModuleId);
+
+                        if (objLink != null)
+                        {
+                            this.ddlViewOrderLinks.Items.Remove(this.ddlViewOrderLinks.Items.FindByText(objLink.Title));
+
+                            if (this.ddlViewOrderLinks.Items.Count > 0)
+                            {
+                                this.ddlViewOrderLinks.SelectedValue = LinkController.GetLinkByHigherViewOrder(objLink.ViewOrder, this.ModuleId).ToString();
+
+                                if (int.Parse(this.ddlViewOrderLinks.SelectedValue) < objLink.ViewOrder)
+                                {
+                                    this.ddlViewOrder.SelectedValue = "A";
+                                }
+                                else
+                                {
+                                    this.ddlViewOrder.SelectedValue = "B";
+                                }
+                            }
+
+                            this.txtTitle.Text = objLink.Title.ToString();
+                            this.ctlURL.Url = objLink.Url;
+                            string urlType = LinkController.ConvertUrlType(DotNetNuke.Common.Globals.GetURLType(objLink.Url));
+
+                            if (urlType != "U")
+                            {
+                                this.tblGetContent.Visible = false;
+                            }
+
+                            this.txtDescription.Text = objLink.Description.ToString();
+                            this.ddlGetContentInterval.SelectedValue = objLink.RefreshInterval.ToString();
+
+                            this.ctlAudit.CreatedByUser = objLink.CreatedByUser.ToString();
+                            this.ctlAudit.CreatedDate = objLink.CreatedDate.ToString();
+
+                            this.ctlTracking.URL = objLink.Url;
+                            this.ctlTracking.ModuleID = this.ModuleId;
+
+                            foreach (ListItem cb in this.cblGrantRoles.Items)
+                            {
+                                cb.Selected = objLink.GrantRoles.Contains(";" + cb.Value + ";");
+                            }
+                        }
+                        else
+                        {
+                            this.Response.Redirect(Common.Globals.NavigateURL(), true);
+                        }
+                    }
+                    else
+                    {
+                        this.cmdDelete.Visible = false;
+                        this.ctlAudit.Visible = false;
+                        this.ctlTracking.Visible = false;
+                    }
                 }
             }
             catch (Exception exc)
@@ -352,15 +300,27 @@ namespace DotNetNuke.Modules.Links
         }
 
         /// <summary>
-        ///         ''' Try to retrieve meta description and title from the url specified
-        ///         ''' </summary>
-        ///         ''' <param name="sender"></param>
-        ///         ''' <param name="e"></param>
-        ///         ''' <remarks></remarks>
-        ///         ''' <history>
-        ///         '''     [alex]      10/02/2009   First implementation 
-        ///         ''' </history>
-        protected void lbtGetContent_Click(object sender, System.EventArgs e)
+        /// Handles the PreRender event of the Page control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        protected void Page_PreRender(object sender, System.EventArgs e)
+        {
+            // hide get content functionality when externel url isn`t selected
+            if (!string.IsNullOrEmpty(this.ctlURL.UrlType) && this.ctlURL.UrlType != "U")
+            {
+                this.tblGetContent.Visible = false;
+            }
+        }
+
+        /// <summary>
+        /// Handles the Click event of the lbtGetContent control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+        protected void lbtGetContent_Click(object sender, EventArgs e)
+#pragma warning restore SA1300 // Element should begin with upper-case letter
         {
             string targetUrl = this.ctlURL.Url;
 
@@ -383,10 +343,10 @@ namespace DotNetNuke.Modules.Links
                     retrieveMessageCssClass = "MessageFailure";
                 }
 
-                lblGetContentResult.Text = retrieveMessage;
-                lblGetContentResult.CssClass = retrieveMessageCssClass;
+                this.lblGetContentResult.Text = retrieveMessage;
+                this.lblGetContentResult.CssClass = retrieveMessageCssClass;
 
-                valTitle.Validate();
+                this.valTitle.Validate();
             }
         }
     }
