@@ -1,144 +1,154 @@
-﻿// 
-// DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2008
-// by DotNetNuke Corporation
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
-// of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-// DEALINGS IN THE SOFTWARE.
-// 
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using System.Web.UI.WebControls;
-using DotNetNuke;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Security.Permissions;
-using System.Xml;
-using Dnn.Links;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Services.FileSystem;
-using System.Collections;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
 
 namespace DotNetNuke.Modules.Links
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Web.UI.WebControls;
+    using System.Xml;
 
-    /// -----------------------------------------------------------------------------
-    ///     ''' <summary>
-    ///     ''' The Settings ModuleSettingsBase is used to manage the 
-    ///     ''' settings for the Links Module
-    ///     ''' </summary>
-    ///     ''' <remarks>
-    ///     ''' </remarks>
-    ///     ''' <history>
-    ///     ''' 	[cnurse]	9/23/2004	Moved Links to a separate Project
-    ///     ''' 	[cnurse]	9/23/2004	Updated to reflect design changes for Help, 508 support
-    ///     '''                       and localisation
-    ///     '''		[cnurse]	10/20/2004	Converted to a ModuleSettingsBase class
-    ///     ''' </history>
-    ///     ''' -----------------------------------------------------------------------------
-    partial class Settings : ModuleSettingsBase
+    using Dnn.Links;
+    using DotNetNuke.Entities.Modules;
+    using DotNetNuke.Entities.Tabs;
+    using DotNetNuke.Security.Permissions;
+    using DotNetNuke.Services.Exceptions;
+    using DotNetNuke.Services.FileSystem;
+
+    /// <summary>
+    /// Represents the module settings.
+    /// </summary>
+    public partial class Settings : ModuleSettingsBase
     {
-        public const string BUSINESSCARDMODE = "BusinessCardMode";
-        public const string NORMALMODE = "NormalMode";
+        /// <summary>
+        /// Gets a value indicating whether to show the icons panel.
+        /// </summary>
+        public bool ShowIconPanel
+        {
+            get
+            {
+                bool result = false;
 
+                if (int.Parse(this.optLinkModuleType.SelectedValue) == 1)
+                {
+                    result = true;
+                }
 
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' LoadSettings loads the settings from the Databas and displays them
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         '''		[cnurse]	10/20/2004	created
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether to show the wrap panel.
+        /// </summary>
+        public bool ShowWrapPanel
+        {
+            get
+            {
+                bool result = false;
+
+                if (this.optControl.SelectedValue != Consts.DisplayModeDropdown)
+                {
+                    result = true;
+                }
+
+                return result;
+            }
+        }
+
+        /// <inheritdoc/>
         public override void LoadSettings()
         {
             try
             {
-                if ((Page.IsPostBack == false))
+                if (!this.Page.IsPostBack)
                 {
-                    // 2014 TODO: Menu
-                    if (System.Convert.ToString(ModuleSettings[SettingName.MenuAllUsers]) != string.Empty)
+                    if (Convert.ToString(this.ModuleSettings[SettingName.MenuAllUsers]) != string.Empty)
                     {
-                        ListItem item = optMenuAllUsers.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.MenuAllUsers]));
+                        ListItem item = this.optMenuAllUsers.Items.FindByValue(System.Convert.ToString(this.ModuleSettings[SettingName.MenuAllUsers]));
                         if (item != null)
-                            item.Selected = true;
-                    }
-                    else
-                        optMenuAllUsers.SelectedIndex = 0;
-
-                    if (System.Convert.ToString(ModuleSettings[SettingName.DisplayMode]) != string.Empty)
-                    {
-                        optControl.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.DisplayMode])).Selected = true;
-                        pnlWrap.Visible = ShowWrapPanel;
-                    }
-                    else
-                        optControl.SelectedIndex = 0;// list
-
-                    if (System.Convert.ToString(ModuleSettings[SettingName.Direction]) != string.Empty)
-                        optView.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.Direction])).Selected = true;
-                    else
-                        optView.SelectedIndex = 0;// vertical
-
-                    if (System.Convert.ToString(ModuleSettings[SettingName.LinkDescriptionMode]) != "")
-                        optInfo.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.LinkDescriptionMode])).Selected = true;
-                    else
-                        optInfo.SelectedIndex = 1;
-
-                    trOptView.Visible = optControl.SelectedValue != Consts.DisplayModeDropdown;
-
-                    if (DotNetNuke.Application.DotNetNukeContext.Current.Application.Version.Major > 5)
-                        optInfo.Items[2].Enabled = true;
-                    else
-                        optInfo.Items[2].Enabled = false;
-
-                    if (System.Convert.ToString(ModuleSettings[SettingName.Icon]) != string.Empty)
-                        ctlIcon.Url = System.Convert.ToString(ModuleSettings[SettingName.Icon]);
-
-                    if (System.Convert.ToString(ModuleSettings["nowrap"]) != string.Empty)
-                        optNoWrap.Items.FindByValue(System.Convert.ToString(ModuleSettings["nowrap"])).Selected = true;
-                    else
-                        optNoWrap.SelectedIndex = 1;
-
-                    if (System.Convert.ToString(ModuleSettings[SettingName.UsePermissions]) != string.Empty)
-                        optUsePermissions.Items.FindByValue(System.Convert.ToString(ModuleSettings[SettingName.UsePermissions])).Selected = true;
-                    else
-                        optUsePermissions.SelectedIndex = 0;
-
-                    if (ModuleSettings[SettingName.ModuleContentType] != null)
-                    {
-                        string moduleContenttype = ModuleSettings[SettingName.ModuleContentType].ToString();
-                        if (!string.IsNullOrEmpty(moduleContenttype))
                         {
-                            optLinkModuleType.Items.FindByValue(moduleContenttype).Selected = true;
-                            pnlIcon.Visible = ShowIconPanel;
-                            LoadContentData(System.Convert.ToString(ModuleSettings[SettingName.ModuleContentType]));
+                            item.Selected = true;
                         }
                     }
+                    else
+                    {
+                        this.optMenuAllUsers.SelectedIndex = 0;
+                    }
 
+                    if (Convert.ToString(this.ModuleSettings[SettingName.DisplayMode]) != string.Empty)
+                    {
+                        this.optControl.Items.FindByValue(System.Convert.ToString(this.ModuleSettings[SettingName.DisplayMode])).Selected = true;
+                        this.pnlWrap.Visible = this.ShowWrapPanel;
+                    }
+                    else
+                    {
+                        this.optControl.SelectedIndex = 0; // list
+                    }
+
+                    if (System.Convert.ToString(this.ModuleSettings[SettingName.Direction]) != string.Empty)
+                    {
+                        this.optView.Items.FindByValue(System.Convert.ToString(this.ModuleSettings[SettingName.Direction])).Selected = true;
+                    }
+                    else
+                    {
+                        this.optView.SelectedIndex = 0; // vertical
+                    }
+
+                    if (System.Convert.ToString(this.ModuleSettings[SettingName.LinkDescriptionMode]) != string.Empty)
+                    {
+                        this.optInfo.Items.FindByValue(System.Convert.ToString(this.ModuleSettings[SettingName.LinkDescriptionMode])).Selected = true;
+                    }
+                    else
+                    {
+                        this.optInfo.SelectedIndex = 1;
+                    }
+
+                    this.trOptView.Visible = this.optControl.SelectedValue != Consts.DisplayModeDropdown;
+
+                    if (DotNetNuke.Application.DotNetNukeContext.Current.Application.Version.Major > 5)
+                    {
+                        this.optInfo.Items[2].Enabled = true;
+                    }
+                    else
+                    {
+                        this.optInfo.Items[2].Enabled = false;
+                    }
+
+                    if (System.Convert.ToString(this.ModuleSettings[SettingName.Icon]) != string.Empty)
+                    {
+                        this.ctlIcon.Url = System.Convert.ToString(this.ModuleSettings[SettingName.Icon]);
+                    }
+
+                    if (System.Convert.ToString(this.ModuleSettings["nowrap"]) != string.Empty)
+                    {
+                        this.optNoWrap.Items.FindByValue(System.Convert.ToString(this.ModuleSettings["nowrap"])).Selected = true;
+                    }
+                    else
+                    {
+                        this.optNoWrap.SelectedIndex = 1;
+                    }
+
+                    if (System.Convert.ToString(this.ModuleSettings[SettingName.UsePermissions]) != string.Empty)
+                    {
+                        this.optUsePermissions.Items.FindByValue(System.Convert.ToString(this.ModuleSettings[SettingName.UsePermissions])).Selected = true;
+                    }
+                    else
+                    {
+                        this.optUsePermissions.SelectedIndex = 0;
+                    }
+
+                    if (this.ModuleSettings[SettingName.ModuleContentType] != null)
+                    {
+                        string moduleContenttype = this.ModuleSettings[SettingName.ModuleContentType].ToString();
+                        if (!string.IsNullOrEmpty(moduleContenttype))
+                        {
+                            this.optLinkModuleType.Items.FindByValue(moduleContenttype).Selected = true;
+                            this.pnlIcon.Visible = this.ShowIconPanel;
+                            this.LoadContentData(System.Convert.ToString(this.ModuleSettings[SettingName.ModuleContentType]));
+                        }
+                    }
                 }
             }
             catch (Exception exc)
@@ -147,135 +157,254 @@ namespace DotNetNuke.Modules.Links
             }
         }
 
+        /// <summary>
+        /// Loads the content data.
+        /// </summary>
+        /// <param name="pContentType">The type of content to load.</param>
         public void LoadContentData(string pContentType)
         {
-            plControl.Visible = true;
-            optControl.Visible = true;
-            ploptView.Visible = true;
-            optView.Visible = true;
-            plInfo.Visible = true;
-            optInfo.Visible = true;
-            plNoWrap.Visible = true;
-            optNoWrap.Visible = true;
-            plUsePermissions.Visible = true;
-            optUsePermissions.Visible = true;
-            plIcon.Visible = true;
-            ctlIcon.Visible = true;
+            this.plControl.Visible = true;
+            this.optControl.Visible = true;
+            this.ploptView.Visible = true;
+            this.optView.Visible = true;
+            this.plInfo.Visible = true;
+            this.optInfo.Visible = true;
+            this.plNoWrap.Visible = true;
+            this.optNoWrap.Visible = true;
+            this.plUsePermissions.Visible = true;
+            this.optUsePermissions.Visible = true;
+            this.plIcon.Visible = true;
+            this.ctlIcon.Visible = true;
 
-            plDisplayAttribute.Visible = false;
-            optDisplayAttribute.Visible = false;
-            optDisplayOrder.Visible = false;
-            // 2014 TODO: Menu
-            plMenuAllUsers.Visible = false;
-            optMenuAllUsers.Visible = false;
+            this.plDisplayAttribute.Visible = false;
+            this.optDisplayAttribute.Visible = false;
+            this.optDisplayOrder.Visible = false;
+
+            this.plMenuAllUsers.Visible = false;
+            this.optMenuAllUsers.Visible = false;
             switch ((Enums.ModuleContentTypes)int.Parse(pContentType))
             {
                 case Enums.ModuleContentTypes.Links:
-                {
-                    optUsePermissions.Visible = true;
-                    plUsePermissions.Visible = true;
-                    optTypeContentSelection.Visible = false;
-                    break;
-                }
+                    {
+                        this.optUsePermissions.Visible = true;
+                        this.plUsePermissions.Visible = true;
+                        this.optTypeContentSelection.Visible = false;
+                        break;
+                    }
 
                 case Enums.ModuleContentTypes.Menu:
-                {
-                    optTypeContentSelection.Visible = true;
-
-                    TabController dnnTabController = new TabController();
-                    TabCollection portalTabs = dnnTabController.GetTabsByPortal(PortalId);
-                    TabCollection hostTabs = dnnTabController.GetTabsByPortal(-1);
-
-                    TabCollection tabs = new TabCollection();
-                    AddTabsToCollection(portalTabs, tabs);
-                    AddTabsToCollection(hostTabs, tabs);
-
-                    List<DotNetNuke.Entities.Tabs.TabInfo> listTabs = new List<DotNetNuke.Entities.Tabs.TabInfo>();
-                    foreach (System.Collections.Generic.KeyValuePair<int, DotNetNuke.Entities.Tabs.TabInfo> kvp in tabs)
-                        listTabs.Add(kvp.Value);
-
-                    optTypeContentSelection.DataSource = listTabs;
-                    optTypeContentSelection.DataValueField = "TabID";
-                    optTypeContentSelection.DataTextField = "TabPath";
-                    optTypeContentSelection.DataBind();
-
-                    if (System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]) != string.Empty)
                     {
-                        ListItem item = optTypeContentSelection.Items.FindByValue(System.Convert.ToString(ModuleSettings[Consts.ModuleContentItem]));
+                        this.optTypeContentSelection.Visible = true;
 
-                        if (item != null)
-                            item.Selected = true;
-                    }
+                        TabController dnnTabController = new TabController();
+                        TabCollection portalTabs = dnnTabController.GetTabsByPortal(this.PortalId);
+                        TabCollection hostTabs = dnnTabController.GetTabsByPortal(-1);
 
-                    optUsePermissions.Visible = false;
-                    plUsePermissions.Visible = false;
-                    // 2014 TODO: Menu
-                    plMenuAllUsers.Visible = true;
-                    optMenuAllUsers.Visible = true;
-                    break;
-                }
+                        TabCollection tabs = new TabCollection();
+                        this.AddTabsToCollection(portalTabs, tabs);
+                        this.AddTabsToCollection(hostTabs, tabs);
 
-                case Enums.ModuleContentTypes.Folder:
-                {
-
-
-                    var dic = FolderManager.Instance.GetFolders(PortalId);
-
-                    var folders = new List<FolderInfo>();
-
-                    FolderPermissionController folderPermissionsController = new FolderPermissionController();
-
-                    foreach (var item in dic)
-                    {
-                        if (FolderPermissionController.HasFolderPermission(this.PortalId, item.FolderPath, "READ"))
-                            folders.Add(item as FolderInfo);
-                    }
-
-                    optTypeContentSelection.DataSource = folders;
-                    optTypeContentSelection.DataValueField = "FolderID";
-                    optTypeContentSelection.DataTextField = "FolderPath";
-                    optTypeContentSelection.DataBind();
-
-                    foreach (ListItem item in optTypeContentSelection.Items)
-                    {
-                        if (string.IsNullOrEmpty(item.Text))
-                            item.Text = "Root";
-                    }
-
-                    optTypeContentSelection.Visible = true;
-                    optUsePermissions.Visible = false;
-                    plUsePermissions.Visible = false;
-
-                    if (!string.IsNullOrEmpty(ModuleSettings[Consts.ModuleContentItem].ToString()))
-                    {
-                        string moduleContentItem = ModuleSettings[Consts.ModuleContentItem].ToString();
-
-                        bool hasItem = false;
-                        foreach (ListItem item in optTypeContentSelection.Items)
+                        List<DotNetNuke.Entities.Tabs.TabInfo> listTabs = new List<DotNetNuke.Entities.Tabs.TabInfo>();
+                        foreach (System.Collections.Generic.KeyValuePair<int, DotNetNuke.Entities.Tabs.TabInfo> kvp in tabs)
                         {
-                            if (item.Value == moduleContentItem)
+                            listTabs.Add(kvp.Value);
+                        }
+
+                        this.optTypeContentSelection.DataSource = listTabs;
+                        this.optTypeContentSelection.DataValueField = "TabID";
+                        this.optTypeContentSelection.DataTextField = "TabPath";
+                        this.optTypeContentSelection.DataBind();
+
+                        if (System.Convert.ToString(this.ModuleSettings[Consts.ModuleContentItem]) != string.Empty)
+                        {
+                            ListItem item = this.optTypeContentSelection.Items.FindByValue(System.Convert.ToString(this.ModuleSettings[Consts.ModuleContentItem]));
+
+                            if (item != null)
                             {
-                                hasItem = true;
-                                break;
+                                item.Selected = true;
                             }
                         }
 
-                        if (hasItem)
-                            optTypeContentSelection.SelectedValue = ModuleSettings[Consts.ModuleContentItem].ToString();
+                        this.optUsePermissions.Visible = false;
+                        this.plUsePermissions.Visible = false;
+                        this.plMenuAllUsers.Visible = true;
+                        this.optMenuAllUsers.Visible = true;
+                        break;
                     }
 
-                    break;
-                }
+                case Enums.ModuleContentTypes.Folder:
+                    {
+                        var dic = FolderManager.Instance.GetFolders(this.PortalId);
+
+                        var folders = new List<FolderInfo>();
+
+                        FolderPermissionController folderPermissionsController = new FolderPermissionController();
+
+                        foreach (var item in dic)
+                        {
+                            if (FolderPermissionController.HasFolderPermission(this.PortalId, item.FolderPath, "READ"))
+                            {
+                                folders.Add(item as FolderInfo);
+                            }
+                        }
+
+                        this.optTypeContentSelection.DataSource = folders;
+                        this.optTypeContentSelection.DataValueField = "FolderID";
+                        this.optTypeContentSelection.DataTextField = "FolderPath";
+                        this.optTypeContentSelection.DataBind();
+
+                        foreach (ListItem item in this.optTypeContentSelection.Items)
+                        {
+                            if (string.IsNullOrEmpty(item.Text))
+                            {
+                                item.Text = "Root";
+                            }
+                        }
+
+                        this.optTypeContentSelection.Visible = true;
+                        this.optUsePermissions.Visible = false;
+                        this.plUsePermissions.Visible = false;
+
+                        if (!string.IsNullOrEmpty(this.ModuleSettings[Consts.ModuleContentItem].ToString()))
+                        {
+                            string moduleContentItem = this.ModuleSettings[Consts.ModuleContentItem].ToString();
+
+                            bool hasItem = false;
+                            foreach (ListItem item in this.optTypeContentSelection.Items)
+                            {
+                                if (item.Value == moduleContentItem)
+                                {
+                                    hasItem = true;
+                                    break;
+                                }
+                            }
+
+                            if (hasItem)
+                            {
+                                this.optTypeContentSelection.SelectedValue = this.ModuleSettings[Consts.ModuleContentItem].ToString();
+                            }
+                        }
+
+                        break;
+                    }
             }
+        }
+
+        /// <inheritdoc/>
+        public override void UpdateSettings()
+        {
+            try
+            {
+                ModuleController objModules = new ModuleController();
+
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.DisplayMode, this.optControl.SelectedItem.Value);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.Direction, this.optView.SelectedItem.Value);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.LinkDescriptionMode, this.optInfo.SelectedItem.Value);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.Icon, this.ctlIcon.Url);
+                objModules.UpdateModuleSetting(this.ModuleId, "nowrap", this.optNoWrap.SelectedItem.Value);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.ModuleContentType, this.optLinkModuleType.SelectedValue);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.UsePermissions, this.optUsePermissions.SelectedValue);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.DisplayAttribute, this.optDisplayAttribute.SelectedValue);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.DisplayOrder, this.optDisplayOrder.SelectedValue);
+                objModules.UpdateModuleSetting(this.ModuleId, SettingName.MenuAllUsers, this.optMenuAllUsers.SelectedValue);
+
+                switch ((Enums.ModuleContentTypes)int.Parse(this.optLinkModuleType.SelectedValue))
+                {
+                    case Enums.ModuleContentTypes.Menu:
+                        {
+                            objModules.UpdateModuleSetting(this.ModuleId, Consts.ModuleContentItem, this.optTypeContentSelection.SelectedValue);
+                            break;
+                        }
+
+                    case Enums.ModuleContentTypes.Folder:
+                        {
+                            objModules.UpdateModuleSetting(this.ModuleId, Consts.ModuleContentItem, this.optTypeContentSelection.SelectedValue);
+                            objModules.UpdateModuleSetting(this.ModuleId, Consts.FolderId, this.optTypeContentSelection.SelectedValue);
+                            break;
+                        }
+
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                bool allowCaching = true;
+
+                if (this.optControl.SelectedItem.Value == Consts.DisplayModeDropdown)
+                {
+                    allowCaching = false;
+                }
+
+                if (this.optInfo.SelectedItem.Value == "Y")
+                {
+                    allowCaching = false;
+                }
+
+                if (!allowCaching)
+                {
+                    DotNetNuke.Entities.Modules.ModuleInfo objModule = objModules.GetModule(this.ModuleId, this.TabId, false);
+                    if (objModule.CacheTime > 0)
+                    {
+                        objModule.CacheTime = 0;
+                        objModules.UpdateModule(objModule);
+                    }
+                }
+
+                ModuleController.SynchronizeModule(this.ModuleId);
+            }
+            catch (Exception exc)
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+
+        /// <summary>
+        /// Handles the SelectedIndexChanged event of the optLinkModuleType control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+        public void optLinkModuleType_SelectedIndexChanged(object sender, System.EventArgs e)
+#pragma warning restore SA1300 // Element should begin with upper-case letter
+        {
+            try
+            {
+                this.pnlIcon.Visible = this.ShowIconPanel;
+
+                this.LoadContentData(this.optLinkModuleType.SelectedValue);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.ProcessModuleLoadException(this, ex);
+            }
+        }
+
+        /// <summary>
+        /// Handles the SelectedIndexChanged event of the optControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+        public void optControl_SelectedIndexChanged(object sender, EventArgs e)
+#pragma warning restore SA1300 // Element should begin with upper-case letter
+        {
+            this.pnlWrap.Visible = this.ShowWrapPanel;
+
+            if (this.ShowWrapPanel)
+            {
+                this.optNoWrap.SelectedValue = "NW";
+            }
+
+            this.trOptView.Visible = this.optControl.SelectedValue != Consts.DisplayModeDropdown;
         }
 
         private void AddTabsToCollection(TabCollection inTabs, TabCollection outtabs)
         {
-
             // 1.0.2 - Workaround for dnn powered content localization - [alexander.zimmer] & [simon.meraner]
-            // serialize tab object in order to be able to identify whether the content localization is active. 
-            System.Xml.Serialization.XmlSerializer tabSerializer = new System.Xml.Serialization.XmlSerializer(typeof(DotNetNuke.Entities.Tabs.TabInfo));
-            foreach (System.Collections.Generic.KeyValuePair<int, DotNetNuke.Entities.Tabs.TabInfo> kvp in inTabs)
+            // serialize tab object in order to be able to identify whether the content localization is active.
+            System.Xml.Serialization.XmlSerializer tabSerializer = new System.Xml.Serialization.XmlSerializer(typeof(TabInfo));
+            foreach (KeyValuePair<int, TabInfo> kvp in inTabs)
             {
                 if (!outtabs.ContainsKey(kvp.Key))
                 {
@@ -299,140 +428,16 @@ namespace DotNetNuke.Modules.Links
 
                         // dnn 5.5.x detected ... exclude tabs where the cultures doesn`t matcj the current culture
                         if (cultureNode != null && cultureNode.Value != System.Threading.Thread.CurrentThread.CurrentCulture.Name)
+                        {
                             showCulture = false;
+                        }
                     }
-                    // -------------------------------------------------------------------------------------------------------
 
                     if (showCulture)
+                    {
                         outtabs.Add(kvp.Key, kvp.Value);
-                }
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        ///         ''' <summary>
-        ///         ''' UpdateSettings saves the modified settings to the Database
-        ///         ''' </summary>
-        ///         ''' <remarks>
-        ///         ''' </remarks>
-        ///         ''' <history>
-        ///         '''		[cnurse]	10/20/2004	created
-        ///         '''		[cnurse]	10/25/2004	upated to use TabModuleId rather than TabId/ModuleId
-        ///         ''' </history>
-        ///         ''' -----------------------------------------------------------------------------
-        public override void UpdateSettings()
-        {
-            try
-            {
-                Entities.Modules.ModuleController objModules = new Entities.Modules.ModuleController();
-                // 2014 TODO: Menu
-                objModules.UpdateModuleSetting(ModuleId, SettingName.DisplayMode, optControl.SelectedItem.Value);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.Direction, optView.SelectedItem.Value);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.LinkDescriptionMode, optInfo.SelectedItem.Value);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.Icon, ctlIcon.Url);
-                objModules.UpdateModuleSetting(ModuleId, "nowrap", optNoWrap.SelectedItem.Value);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.ModuleContentType, optLinkModuleType.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.UsePermissions, optUsePermissions.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.DisplayAttribute, optDisplayAttribute.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.DisplayOrder, optDisplayOrder.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, SettingName.MenuAllUsers, optMenuAllUsers.SelectedValue);
-
-                switch ((Enums.ModuleContentTypes)int.Parse(optLinkModuleType.SelectedValue))
-                {
-                    case Enums.ModuleContentTypes.Menu:
-                    {
-                        objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
-                        break;
-                    }
-
-                    case Enums.ModuleContentTypes.Folder:
-                    {
-                        objModules.UpdateModuleSetting(ModuleId, Consts.ModuleContentItem, optTypeContentSelection.SelectedValue);
-                        objModules.UpdateModuleSetting(ModuleId, Consts.FolderId, optTypeContentSelection.SelectedValue);
-                        break;
-                    }
-
-                    default:
-                    {
-                        break;
                     }
                 }
-
-                bool allowCaching = true;
-
-                if (optControl.SelectedItem.Value == Consts.DisplayModeDropdown)
-                    allowCaching = false;
-
-                if (optInfo.SelectedItem.Value == "Y")
-                    allowCaching = false;
-
-                if (!allowCaching)
-                {
-                    DotNetNuke.Entities.Modules.ModuleInfo objModule = objModules.GetModule(ModuleId, TabId, false);
-                    if (objModule.CacheTime > 0)
-                    {
-                        objModule.CacheTime = 0;
-                        objModules.UpdateModule(objModule);
-                    }
-                }
-
-                ModuleController.SynchronizeModule(ModuleId);
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-
-
-        public void optLinkModuleType_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            try
-            {
-                pnlIcon.Visible = ShowIconPanel;
-
-                LoadContentData(optLinkModuleType.SelectedValue);
-            }
-            catch (Exception ex)
-            {
-                Exceptions.ProcessModuleLoadException(this, ex);
-            }
-        }
-
-        public void optControl_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            pnlWrap.Visible = ShowWrapPanel;
-
-            if (ShowWrapPanel)
-                optNoWrap.SelectedValue = "NW";
-
-            trOptView.Visible = optControl.SelectedValue != Consts.DisplayModeDropdown;
-        }
-
-        public bool ShowIconPanel
-        {
-            get
-            {
-                bool result = false;
-
-                if (int.Parse(optLinkModuleType.SelectedValue) == 1)
-                    result = true;
-
-                return result;
-            }
-        }
-
-        public bool ShowWrapPanel
-        {
-            get
-            {
-                bool result = false;
-
-                if (optControl.SelectedValue != Consts.DisplayModeDropdown)
-                    result = true;
-
-                return result;
             }
         }
     }
