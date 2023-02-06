@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using DotNetNuke.Data;
-using DotNetNuke.Entities.Tabs;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
 
 namespace DotNetNuke.Modules.Links.Components
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+
+    using DotNetNuke.Data;
+    using DotNetNuke.Entities.Tabs;
+
     /// <summary>
-    /// Provides data access to the links in the database
+    /// Provides data access to the links in the database.
     /// </summary>
     public static class LinkController
     {
         /// <summary>
-        /// Save a new link in the database
+        /// Save a new link in the database.
         /// </summary>
-        /// <param name="link">The link info object to be saved</param>
+        /// <param name="link">The link info object to be saved.</param>
         public static void AddLink(Link link)
         {
             using (var ctx = DataContext.Instance())
@@ -29,10 +31,10 @@ namespace DotNetNuke.Modules.Links.Components
         }
 
         /// <summary>
-        /// Removed a link in the database
+        /// Removed a link in the database.
         /// </summary>
-        /// <param name="itemId">The item ID of the link to delete</param>
-        /// <param name="moduleId">The moduleID of the link to delete</param>
+        /// <param name="itemId">The item ID of the link to delete.</param>
+        /// <param name="moduleId">The moduleID of the link to delete.</param>
         public static void DeleteLink(int itemId, int moduleId)
         {
             using (var ctx = DataContext.Instance())
@@ -43,9 +45,9 @@ namespace DotNetNuke.Modules.Links.Components
         }
 
         /// <summary>
-        /// Update an existing link in the database
+        /// Update an existing link in the database.
         /// </summary>
-        /// <param name="link">The link info object</param>
+        /// <param name="link">The link info object.</param>
         public static void UpdateLink(Link link)
         {
             using (var ctx = DataContext.Instance())
@@ -54,15 +56,12 @@ namespace DotNetNuke.Modules.Links.Components
                 rep.Update(link);
             }
         }
-        
+
         /// <summary>
-        /// Evaluates the targets content and tries to build a summary about the targets title and description
+        /// Evaluates the targets content and tries to build a summary about the targets title and description.
         /// </summary>
-        /// <param name="url">Target URL</param>
-        /// <returns>A short summary of the content</returns>
-        /// <history>
-        /// [alex] 9/1/2009 Implementing fontionality
-        /// </history>
+        /// <param name="url">Target URL.</param>
+        /// <returns>A short summary of the content.</returns>
         public static TargetInfo GetTargetContent(string url)
         {
             // verify passed arguments
@@ -76,7 +75,7 @@ namespace DotNetNuke.Modules.Links.Components
                 // use proxy if defined in host settings
                 if (!string.IsNullOrEmpty(DotNetNuke.Entities.Host.Host.ProxyServer))
                 {
-                    int proxyPort = DotNetNuke.Entities.Host.Host.ProxyPort;                    
+                    int proxyPort = DotNetNuke.Entities.Host.Host.ProxyPort;
                     System.Net.WebProxy proxy = new System.Net.WebProxy(DotNetNuke.Entities.Host.Host.ProxyServer, proxyPort);
                     webClient.Proxy = proxy;
                 }
@@ -156,6 +155,11 @@ namespace DotNetNuke.Modules.Links.Components
             }
         }
 
+        /// <summary>
+        /// Refreshes the content of the link.
+        /// </summary>
+        /// <param name="objLink">The link to refresh.</param>
+        /// <returns>The refreshed link.</returns>
         public static Link RefreshLinkContent(Link objLink)
         {
             if (DateTime.Now.Subtract(new TimeSpan(0, objLink.RefreshInterval, 0)) >= objLink.CreatedDate)
@@ -172,6 +176,12 @@ namespace DotNetNuke.Modules.Links.Components
             return objLink;
         }
 
+        /// <summary>
+        /// Gets the link by higher view order.
+        /// </summary>
+        /// <param name="viewOrder">The view order.</param>
+        /// <param name="moduleId">The module identifier.</param>
+        /// <returns>An integer representing the view order.</returns>
         public static int GetLinkByHigherViewOrder(int viewOrder, int moduleId)
         {
             int prevOrder = int.MinValue;
@@ -195,11 +205,11 @@ namespace DotNetNuke.Modules.Links.Components
         }
 
         /// <summary>
-        /// Updates the view order of a link up or down, use negative increaseValue to move down
+        /// Updates the view order of a link up or down, use negative increaseValue to move down.
         /// </summary>
-        /// <param name="objLink">The link object</param>
-        /// <param name="increaseValue">how many places to move up or down (use negative numbers to move down)</param>
-        /// <param name="moduleId">The module ID</param>
+        /// <param name="objLink">The link object.</param>
+        /// <param name="increaseValue">how many places to move up or down (use negative numbers to move down).</param>
+        /// <param name="moduleId">The module ID.</param>
         public static void UpdateViewOrder(Link objLink, int increaseValue, int moduleId)
         {
             foreach (var link in GetLinks(moduleId))
@@ -218,19 +228,24 @@ namespace DotNetNuke.Modules.Links.Components
         }
 
         /// <summary>
-        /// Gets a single link bye the itemID and ModuleID
+        /// Gets a single link bye the itemID and ModuleID.
         /// </summary>
-        /// <param name="itemID">The ID of the item</param>
-        /// <param name="moduleId">The module ID</param>
-        /// <returns>Link info object</returns>
+        /// <param name="itemID">The ID of the item.</param>
+        /// <param name="moduleId">The module ID.</param>
+        /// <returns>Link info object.</returns>
         public static Link GetLink(int itemID, int moduleId)
         {
             using (var ctx = DataContext.Instance())
             {
                 return ctx.ExecuteQuery<Link>(System.Data.CommandType.StoredProcedure, "{databaseOwner}{objectQualifier}dnnLinks_GetLink", itemID, moduleId).FirstOrDefault();
-            }                
+            }
         }
 
+        /// <summary>
+        /// Gets the links.
+        /// </summary>
+        /// <param name="moduleId">The id of the current module.</param>
+        /// <returns>A collection of links.</returns>
         public static IEnumerable<Link> GetLinks(int moduleId)
         {
             using (var ctx = DataContext.Instance())
@@ -239,6 +254,11 @@ namespace DotNetNuke.Modules.Links.Components
             }
         }
 
+        /// <summary>
+        /// Converts the type of the URL.
+        /// </summary>
+        /// <param name="tabType">Type of the tab.</param>
+        /// <returns>A string for a code representing the url type.</returns>
         public static string ConvertUrlType(TabType tabType)
         {
             switch (tabType)
@@ -266,6 +286,11 @@ namespace DotNetNuke.Modules.Links.Components
             }
         }
 
+        /// <summary>
+        /// Deletes the link if it exists for the module.
+        /// </summary>
+        /// <param name="moduleId">The id of the current module.</param>
+        /// <param name="link">The link to delete.</param>
         public static void DeleteLinkIfItExistsForModule(int moduleId, Link link)
         {
             foreach (var oldLink in GetLinks(moduleId))

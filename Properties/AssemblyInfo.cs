@@ -12,7 +12,7 @@
 [assembly: System.Reflection.AssemblyCompany("DNN Community")]
 [assembly: System.Reflection.AssemblyProduct("Links")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2021")]
-[assembly: System.Reflection.AssemblyVersion("8.0.0.00")]
+[assembly: System.Reflection.AssemblyVersion("8.0.1.00")]
 [assembly: System.Reflection.AssemblyTitle("DNN Links")]
 
 
