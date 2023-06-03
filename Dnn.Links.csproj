@@ -140,7 +140,6 @@
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
     <None Include="packages.config" />
     <Content Include="Providers\DataProviders\SqlDataProvider\07.01.00.SqlDataProvider" />
-    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\EditLinks.ascx.resx" />
