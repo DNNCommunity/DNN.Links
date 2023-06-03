@@ -265,7 +265,8 @@ namespace DotNetNuke.Modules.Links
                         this.optUsePermissions.Visible = false;
                         this.plUsePermissions.Visible = false;
 
-                        if (!string.IsNullOrEmpty(this.ModuleSettings[Consts.ModuleContentItem].ToString()))
+                        if (this.ModuleSettings[Consts.ModuleContentItem] != null
+                            && !string.IsNullOrEmpty(this.ModuleSettings[Consts.ModuleContentItem].ToString()))
                         {
                             string moduleContentItem = this.ModuleSettings[Consts.ModuleContentItem].ToString();
 
