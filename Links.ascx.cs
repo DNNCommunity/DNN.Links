@@ -533,7 +533,8 @@ namespace DotNetNuke.Modules.Links
                                     string moduleContentItem = this.Settings[Consts.ModuleContentItem].ToString();
                                     int.TryParse(moduleContentItem, out int moduleContentItemInt);
                                     tabsToShow = TabController.GetTabsByParent(moduleContentItemInt, this.PortalId)
-                                        .Where(t => t.IsVisible && !t.IsDeleted).ToList();
+                                        .Where(t => t.IsVisible && !t.IsDeleted && !t.DisableLink)
+                                        .ToList();
                                 }
 
                                 foreach (TabInfo tabinfo in tabsToShow)
