@@ -8,7 +8,6 @@ namespace DotNetNuke.Modules.Links
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.Remoting.Messaging;
     using System.Threading;
     using System.Web.UI.HtmlControls;
     using System.Web.UI.WebControls;
@@ -533,7 +532,8 @@ namespace DotNetNuke.Modules.Links
                                 {
                                     string moduleContentItem = this.Settings[Consts.ModuleContentItem].ToString();
                                     int.TryParse(moduleContentItem, out int moduleContentItemInt);
-                                    tabsToShow = TabController.GetTabsByParent(moduleContentItemInt, this.PortalId);
+                                    tabsToShow = TabController.GetTabsByParent(moduleContentItemInt, this.PortalId)
+                                        .Where(t => t.IsVisible && !t.IsDeleted).ToList();
                                 }
 
                                 foreach (TabInfo tabinfo in tabsToShow)
