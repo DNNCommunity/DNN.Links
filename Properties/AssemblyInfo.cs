@@ -9,10 +9,10 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Reflection.AssemblyDescription("Provides an easy way to place a list of links on a website")]
-[assembly: System.Reflection.AssemblyCompany("DNN Community")]
+[assembly: System.Reflection.AssemblyCompany("DotNetNuke")]
 [assembly: System.Reflection.AssemblyProduct("Links")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2021")]
-[assembly: System.Reflection.AssemblyVersion("8.0.1.00")]
-[assembly: System.Reflection.AssemblyTitle("DNN Links")]
+[assembly: System.Reflection.AssemblyVersion("8.0.2.00")]
+[assembly: System.Reflection.AssemblyTitle("DotNetNuke Links Module")]
 
 
