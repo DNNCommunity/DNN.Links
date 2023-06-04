@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DNN_Links" type="Module" version="8.0.1">
+    <package name="DNN_Links" type="Module" version="8.0.2">
       <friendlyName>Links</friendlyName>
       <description>This module renders a list of hyperlinks. Links includes an edit page, which allows authorized users to edit the Links data stored in the SQL database.</description>
       <iconFile>img/links-icon.png</iconFile>
